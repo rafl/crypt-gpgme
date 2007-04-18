@@ -7,6 +7,9 @@
 
 #include <gpgme.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 
 #define PERL_GPGME_CALL_BOOT(name) \
 	{ \
