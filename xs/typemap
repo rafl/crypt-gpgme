@@ -5,6 +5,9 @@ gpgme_protocol_t	GPGME_PROTOCOL_T
 gpgme_keylist_mode_t	GPGME_KEYLIST_MODE_T
 gpgme_data_t	GPGME_DATA_T
 gpgme_sig_mode_t	GPGME_SIG_MODE_T
+gpgme_key_t	GPGME_KEY_T
+const gpgme_key_t	GPGME_KEY_T
+gpgme_validity_t	GPGME_VALIDITY_T
 
 OUTPUT
 
@@ -17,19 +20,19 @@ GPGME_PROTOCOL_T
 GPGME_KEYLIST_MODE_T
 	switch ($var) {
 		case GPGME_KEYLIST_MODE_LOCAL:
-			$arg = newSVpvn ("local", 5);
+			$arg = newSVpvn (\"local\", 5);
 			break;
 		case GPGME_KEYLIST_MODE_EXTERN:
-			$arg = newSVpvn ("extern", 6);
+			$arg = newSVpvn (\"extern\", 6);
 			break;
 		case GPGME_KEYLIST_MODE_SIGS:
-			$arg = newSVpvn ("sigs", 4);
+			$arg = newSVpvn (\"sigs\", 4);
 			break;
 		case GPGME_KEYLIST_MODE_SIG_NOTATIONS:
-			$arg = newSVpvn ("sig-notations", 13);
+			$arg = newSVpvn (\"sig-notations\", 13);
 			break;
 		case GPGME_KEYLIST_MODE_VALIDATE:
-			$arg = newSVpvn ("validate", 8);
+			$arg = newSVpvn (\"validate\", 8);
 			break;
 		default:
 			croak (\"unknown keylist mode\");
@@ -37,6 +40,30 @@ GPGME_KEYLIST_MODE_T
 
 GPGME_DATA_T
 	$arg = perl_gpgme_new_sv_from_ptr ($var, \"Crypt::GpgME::Data\");
+
+GPGME_VALIDITY_T
+	switch ($var) {
+		case GPGME_VALIDITY_UNKNOWN:
+			$arg = newSVpvn (\"unknown\", 7);
+			break;
+		case GPGME_VALIDITY_UNDEFINED:
+			$arg = newSVpvn (\"undefined\", 9);
+			break;
+		case GPGME_VALIDITY_NEVER:
+			$arg = newSVpvn (\"never\", 5);
+			break;
+		case GPGME_VALIDITY_MARGINAL:
+			$arg = newSVpvn (\"marginal\", 8);
+			break;
+		case GPGME_VALIDITY_FULL:
+			$arg = newSVpvn (\"full\", 4);
+			break;
+		case GPGME_VALIDITY_ULTIMATE:
+			$arg = newSVpvn (\"ultimate\", 8);
+			break;
+		default:
+			croak (\"unknown validity\");
+	}
 
 INPUT
 
@@ -110,3 +137,6 @@ GPGME_SIG_MODE_T
 			croak (\"unknown sig mode\");
 		}
 	}
+
+GPGME_KEY_T
+	$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME::Key\");
