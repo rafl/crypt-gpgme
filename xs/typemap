@@ -1,5 +1,6 @@
 TYPEMAP
 gpgme_ctx_t	GPGME_CTX_T
+perl_gpgme_ctx_or_null_t	PERL_GPGME_CTX_OR_NULL_T
 gpgme_protocol_t	GPGME_PROTOCOL_T
 gpgme_keylist_mode_t	GPGME_KEYLIST_MODE_T
 
@@ -45,6 +46,14 @@ INPUT
 
 GPGME_CTX_T
 	$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME\");
+
+PERL_GPGME_CTX_OR_NULL_T
+	if ($arg == &PL_sv_undef) {
+		$var = NULL;
+	}
+	else {
+		$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME\");
+	}
 
 GPGME_PROTOCOL_T
 	{

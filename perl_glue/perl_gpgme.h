@@ -33,6 +33,8 @@
 
 #endif
 
+typedef gpgme_ctx_t perl_gpgme_ctx_or_null_t;
+
 typedef enum {
 	PERL_GPGME_CALLBACK_PARAM_TYPE_STR,
 	PERL_GPGME_CALLBACK_PARAM_TYPE_INT

@@ -99,3 +99,13 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 		cb = perl_gpgme_callback_new (func, user_data, ctx, 4, param_types);
 
 		gpgme_set_passphrase_cb (c_ctx, perl_gpgme_passphrase_cb, cb);
+
+
+NO_OUTPUT gpgme_error_t
+gpgme_set_locale (ctx, category, value)
+		perl_gpgme_ctx_or_null_t ctx
+		int category
+		const char *value
+
+BOOT:
+	gpgme_check_version (NULL);
