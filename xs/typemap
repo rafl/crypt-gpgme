@@ -44,6 +44,9 @@ GPGME_DATA_T
 GPGME_VALIDITY_T
 	$arg = perl_gpgme_validity_to_string ($var);
 
+GPGME_KEY_T
+	$arg = perl_gpgme_new_sv_from_ptr ($var, \"Crypt::GpgME::Key\");
+
 INPUT
 
 GPGME_CTX_T

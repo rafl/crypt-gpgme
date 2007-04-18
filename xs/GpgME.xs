@@ -204,6 +204,20 @@ gpgme_signers_add (ctx, key)
 	POSTCALL:
 		perl_gpgme_assert_error (RETVAL);
 
+gpgme_key_t
+gpgme_get_key (ctx, fpr, secret=0)
+		gpgme_ctx_t ctx
+		const char *fpr
+		int secret
+	PREINIT:
+		gpgme_error_t err;
+	CODE:
+		err = gpgme_get_key (ctx, fpr, &RETVAL, secret);
+	POSTCALL:
+		perl_gpgme_assert_error (err);
+	OUTPUT:
+		RETVAL
+
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 		gpgme_ctx_t ctx
