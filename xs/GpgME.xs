@@ -7,7 +7,6 @@ perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *pas
 	perl_gpgme_callback_t *cb = (perl_gpgme_callback_t *)user_data;
 
 	retvals = (perl_gpgme_callback_retval_t *)malloc (sizeof (perl_gpgme_callback_retval_t) * 1);
-	printf ("c callback\n");
 
 	perl_gpgme_callback_invoke (cb, &retvals, uid_hint, passphrase_info, prev_was_bad, fd);
 
@@ -107,12 +106,9 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 		param_types[2] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT; /* prev_was_bad */
 		param_types[3] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT; /* fd */
 	CODE:
-		printf ("set callback\n");
 		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
-		printf ("ctx: 0x%x\n", (unsigned int)c_ctx);
 
 		cb = perl_gpgme_callback_new (func, user_data, ctx, 4, param_types, 1, retval_types);
-		printf ("cb: 0x%x\n", (unsigned int)cb);
 
 		gpgme_set_passphrase_cb (c_ctx, perl_gpgme_passphrase_cb, cb);
 
