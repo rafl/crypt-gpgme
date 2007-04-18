@@ -132,24 +132,26 @@ owner_trust (key)
 	OUTPUT:
 		RETVAL
 
-#TODO: return lists
-#
-#gpgme_subkey_t
-#subkeys (key)
-#		gpgme_key_t key
-#	CODE:
-#		RETVAL = key->subkeys;
-#	OUTPUT:
-#		RETVAL
-#
-#gpgme_user_id_t
-#uids (key)
-#		gpgme_key_t key
-#	CODE:
-#		RETVAL = key->uids;
-#	OUTPUT:
-#		RETVAL
+void
+subkeys (key)
+		gpgme_key_t key
+	PREINIT:
+		gpgme_subkey_t i;
+	PPCODE:
+		for (i = key->subkeys; i != NULL; i = i->next) {
+			XPUSHs (sv_2mortal (perl_gpgme_hashref_from_subkey (i)));
+		}
 
+void
+uids (key)
+		gpgme_key_t key
+	PREINIT:
+		gpgme_user_id_t i;
+	PPCODE:
+		for (i = key->uids; i != NULL; i = i->next) {
+			XPUSHs (sv_2mortal (perl_gpgme_hashref_from_uid (i)));
+		}
+		
 gpgme_keylist_mode_t
 keylist_mode (key)
 		gpgme_key_t key
