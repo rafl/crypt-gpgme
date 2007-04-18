@@ -86,3 +86,11 @@ SV *perl_gpgme_hashref_from_subkey (gpgme_subkey_t subkey);
 SV *perl_gpgme_hashref_from_uid (gpgme_user_id_t uid);
 
 SV *perl_gpgme_validity_to_string (gpgme_validity_t validity);
+
+SV *perl_gpgme_array_ref_from_signatures (gpgme_key_sig_t sig);
+
+SV *perl_gpgme_hashref_from_signature (gpgme_key_sig_t sig);
+
+SV *perl_gpgme_array_ref_from_notations (gpgme_sig_notation_t notations);
+
+SV *perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation);

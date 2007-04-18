@@ -380,7 +380,109 @@ perl_gpgme_hashref_from_uid (gpgme_user_id_t uid) {
 		hv_store (hv, "comment", 7, newSVpv (uid->comment, 0), 0);
 	}
 
-	/* TODO: signatures */
+	if (uid->signatures) {
+		hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_signatures (uid->signatures), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
+
+SV *
+perl_gpgme_array_ref_from_signatures (gpgme_key_sig_t sig) {
+	SV *sv;
+	AV *av;
+	gpgme_key_sig_t i;
+
+	for (i = sig; i != NULL; i = i->next) {
+		av_push (av, perl_gpgme_hashref_from_signature (i));
+	}
+
+	sv = newRV_noinc ((SV *)av);
+	return sv;
+}
+
+SV *
+perl_gpgme_hashref_from_signature (gpgme_key_sig_t sig) {
+	SV *sv;
+	HV *hv;
+
+	/* TODO: error checking */
+	hv_store (hv, "revoked", 7, newSVuv (sig->revoked), 0);
+	hv_store (hv, "expired", 7, newSVuv (sig->expired), 0);
+	hv_store (hv, "invalid", 7, newSVuv (sig->invalid), 0);
+	hv_store (hv, "exportable", 10, newSVuv (sig->exportable), 0);
+	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo), 0);
+
+	if (sig->keyid) {
+		hv_store (hv, "keyid", 5, newSVpv (sig->keyid, 0), 0);
+	}
+
+	hv_store (hv, "timestamp", 9, newSViv (sig->timestamp), 0); /* FIXME: long int vs. IV? */
+	hv_store (hv, "expires", 7, newSViv (sig->expires), 0); /* ditto */
+
+	if (sig->status != GPG_ERR_NO_ERROR) {
+		hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+	}
+
+	if (sig->uid) {
+		hv_store (hv, "uid", 3, newSVpv (sig->uid, 0), 0);
+	}
+
+	if (sig->name) {
+		hv_store (hv, "name", 4, newSVpv (sig->name, 0), 0);
+	}
+
+	if (sig->email) {
+		hv_store (hv, "email", 5, newSVpv (sig->email, 0), 0);
+	}
+
+	if (sig->comment) {
+		hv_store (hv, "comment", 7, newSVpv (sig->comment, 0), 0);
+	}
+
+	/* FIXME: really export this? */
+	hv_store (hv, "sig_class", 9, newSVuv (sig->sig_class), 0);
+
+	if (sig->notations) {
+		hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
+
+SV *
+perl_gpgme_array_ref_from_notations (gpgme_sig_notation_t notations) {
+	SV *sv;
+	AV *av;
+	gpgme_sig_notation_t i;
+
+	for (i = notations; i != NULL; i = i->next) {
+		av_push (av, perl_gpgme_hashref_from_notation (i));
+	}
+
+	sv = newRV_noinc ((SV *)av);
+	return sv;
+}
+
+SV *
+perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation) {
+	SV *sv;
+	HV *hv;
+
+	if (notation->name) {
+		hv_store (hv, "name", 4, newSVpv (notation->name, notation->name_len), 0);
+	}
+
+	if (notation->value) {
+		hv_store (hv, "value", 5, newSVpv (notation->value, notation->value_len), 0);
+	}
+
+	/* Don't store the flags. It's human_readable | critical anyway */
+
+	hv_store (hv, "human_readable", 14, newSVuv (notation->human_readable), 0);
+	hv_store (hv, "critical", 8, newSVuv (notation->critical), 0);
 
 	sv = newRV_noinc ((SV *)hv);
 	return sv;
