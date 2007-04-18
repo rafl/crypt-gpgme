@@ -17,15 +17,20 @@ gpgme_data_new (class)
 
 #TODO: set errno?
 ssize_t
-gpgme_data_read (data, buffer, size)
+gpgme_data_read (data, sv, size)
 		gpgme_data_t data
-		SV *buffer
+		SV *sv
 		size_t size
+	PREINIT:
+		char *buffer;
 	INIT:
-		SvUPGRADE (buffer, SVt_PV);
-		SvGROW (buffer, size);
+		buffer = (char *)malloc (sizeof (char) * size);
 	C_ARGS:
-		data, SvPVX (buffer), size
+		data, buffer, size
+	POSTCALL:
+		sv_setpvn_mg (sv, buffer, RETVAL);
+	CLEANUP:
+		free (buffer);
 
 ssize_t
 gpgme_data_write (data, buffer, size=SvLEN (buffer))
