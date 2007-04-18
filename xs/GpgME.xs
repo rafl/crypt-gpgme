@@ -224,4 +224,5 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 
 BOOT:
 	gpgme_check_version (NULL);
+	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Key);
 	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Data);
