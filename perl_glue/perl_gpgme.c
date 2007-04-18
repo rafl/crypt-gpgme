@@ -103,6 +103,40 @@ perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_c
 }
 
 void
+perl_gpgme_callback_destroy (perl_gpgme_callback_t *cb) {
+	if (cb) {
+		if (cb->func) {
+			SvREFCNT_dec (cb->func);
+			cb->func = NULL;
+		}
+
+		if (cb->data) {
+			SvREFCNT_dec (cb->func);
+			cb->func = NULL;
+		}
+
+		if (cb->obj) {
+			SvREFCNT_dec (cb->obj);
+			cb->obj = NULL;
+		}
+
+		if (cb->param_types) {
+			free (cb->param_types);
+			cb->n_params = 0;
+			cb->param_types = NULL;
+		}
+
+		if (cb->retval_types) {
+			free (cb->retval_types);
+			cb->n_retvals = 0;
+			cb->retval_types = NULL;
+		}
+
+		free (cb);
+	}
+}
+
+void
 perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...) {
 	va_list va_args;
 	int ret, i;

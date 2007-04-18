@@ -72,4 +72,6 @@ void perl_gpgme_assert_error (gpgme_error_t err);
 
 perl_gpgme_callback_t *perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_callback_param_type_t param_types[], int n_retvals, perl_gpgme_callback_retval_type_t retval_types[]);
 
+void perl_gpgme_callback_destroy (perl_gpgme_callback_t *cb);
+
 void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...);
