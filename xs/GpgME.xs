@@ -182,6 +182,15 @@ gpgme_ctx_get_engine_info (ctx)
 			XPUSHs (sv);
 		}
 
+NO_OUTPUT gpgme_error_t
+gpgme_ctx_set_engine_info (ctx, proto, file_name, home_dir)
+		gpgme_ctx_t ctx
+		gpgme_protocol_t proto
+		const char *file_name
+		const char *home_dir
+	POSTCALL:
+		perl_gpgme_assert_error (RETVAL);
+
 MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
 
 gpgme_data_t
