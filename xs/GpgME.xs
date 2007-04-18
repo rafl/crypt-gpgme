@@ -3,9 +3,10 @@
 gpgme_error_t
 perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd) {
 	char *buf;
-	perl_gpgme_callback_retval_t **retvals = {0,};
+	perl_gpgme_callback_retval_t *retvals;
 	perl_gpgme_callback_t *cb = (perl_gpgme_callback_t *)user_data;
 
+	retvals = (perl_gpgme_callback_retval_t *)malloc (sizeof (perl_gpgme_callback_retval_t) * 1);
 	printf ("c callback\n");
 
 	perl_gpgme_callback_invoke (cb, &retvals, uid_hint, passphrase_info, prev_was_bad, fd);
