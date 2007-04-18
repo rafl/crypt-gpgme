@@ -215,6 +215,34 @@ gpgme_signers_add (ctx, key)
 		perl_gpgme_assert_error (RETVAL);
 
 gpgme_key_t
+gpgme_signers_enum (ctx, seq)
+		gpgme_ctx_t ctx
+		int seq
+
+void
+gpgme_sig_notation_clear (ctx)
+		gpgme_ctx_t ctx
+
+NO_OUTPUT gpgme_error_t
+gpgme_sig_notation_add (ctx, name, value, flags=0)
+		gpgme_ctx_t ctx
+		const char *name
+		const char *value
+		gpgme_sig_notation_flags_t flags
+
+void
+gpgme_sig_notation_get (ctx)
+		gpgme_ctx_t ctx
+	PREINIT:
+		gpgme_sig_notation_t notations, i;
+	PPCODE:
+		notations = gpgme_sig_notation_get (ctx);
+
+		for (i = notations; i != NULL; i = i->next) {
+			XPUSHs (sv_2mortal (perl_gpgme_hashref_from_notation (i)));
+		}
+
+gpgme_key_t
 gpgme_get_key (ctx, fpr, secret=0)
 		gpgme_ctx_t ctx
 		const char *fpr

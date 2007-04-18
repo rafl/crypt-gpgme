@@ -8,6 +8,7 @@ gpgme_sig_mode_t	GPGME_SIG_MODE_T
 gpgme_key_t	GPGME_KEY_T
 const gpgme_key_t	GPGME_KEY_T
 gpgme_validity_t	GPGME_VALIDITY_T
+gpgme_sig_notation_flags_t	GPGME_SIG_NOTATION_FLAGS_T
 
 OUTPUT
 
@@ -126,3 +127,36 @@ GPGME_SIG_MODE_T
 
 GPGME_KEY_T
 	$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME::Key\");
+
+GPGME_SIG_NOTATION_FLAGS_T
+	if (!$arg || !SvOK ($arg) || !SvROK ($arg) || !(SvTYPE (SvRV ($arg)) != SVt_PVAV)) {
+		croak (\"not a valid flags array reference\");
+	}
+
+	{
+		AV *av;
+		SV **sv;
+		int i, len;
+		char *str;
+
+		av = (AV *)SvRV ($arg);
+		len = av_len (av);
+
+		for (i = 0; i < len; i++) {
+			sv = av_fetch (av, i, 0);
+			if (!sv) {
+				croak (\"failed to fetch array element\");
+			}
+
+			str = SvPV_nolen (*sv);
+			if (strcasecmp (str, \"human-readable\") == 0) {
+				$var |= GPGME_SIG_NOTATION_HUMAN_READABLE;
+			}
+			else if (strcasecmp (str, \"critical\") == 0) {
+				$var |= GPGME_SIG_NOTATION_CRITICAL;
+			}
+			else {
+				croak (\"invalid notation flag\");
+			}
+		}
+	}
