@@ -173,7 +173,7 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 	for (i = 0; i < ret; i++) {
 		switch (cb->retval_types[i]) {
 			case PERL_GPGME_CALLBACK_RETVAL_TYPE_STR:
-				*retvals[i] = (perl_gpgme_callback_retval_t)POPp;
+				*retvals[i] = (perl_gpgme_callback_retval_t)strdup (POPp);
 				break;
 			default:
 				PUTBACK;
