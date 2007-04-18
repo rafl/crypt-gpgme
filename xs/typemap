@@ -1,0 +1,86 @@
+TYPEMAP
+gpgme_ctx_t	GPGME_CTX_T
+gpgme_protocol_t	GPGME_PROTOCOL_T
+gpgme_keylist_mode_t	GPGME_KEYLIST_MODE_T
+
+OUTPUT
+
+GPGME_CTX_T
+	$arg = perl_gpgme_new_sv_from_ptr ($var, \"Crypt::GpgME\");
+
+GPGME_PROTOCOL_T
+	switch ($var) {
+		case GPGME_PROTOCOL_OpenPGP:
+			$arg = newSVpvn ("openpgp", 7);
+			break;
+		case GPGME_PROTOCOL_CMS:
+			$arg = newSVpvn ("cms", 3);
+			break;
+		default:
+			croak (\"unknown protocol\");
+	}
+
+GPGME_KEYLIST_MODE_T
+	switch ($var) {
+		case GPGME_KEYLIST_MODE_LOCAL:
+			$arg = newSVpvn ("local", 5);
+			break;
+		case GPGME_KEYLIST_MODE_EXTERN:
+			$arg = newSVpvn ("extern", 6);
+			break;
+		case GPGME_KEYLIST_MODE_SIGS:
+			$arg = newSVpvn ("sigs", 4);
+			break;
+		case GPGME_KEYLIST_MODE_SIG_NOTATIONS:
+			$arg = newSVpvn ("sig-notations", 13);
+			break;
+		case GPGME_KEYLIST_MODE_VALIDATE:
+			$arg = newSVpvn ("validate", 8);
+			break;
+		default:
+			croak (\"unknown keylist mode\");
+	}
+
+INPUT
+
+GPGME_CTX_T
+	$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME\");
+
+GPGME_PROTOCOL_T
+	{
+		char *protocol = SvPV_nolen ($arg);
+
+		if (strcasecmp (protocol, \"openpgp\") == 0) {
+			$var = GPGME_PROTOCOL_OpenPGP;
+		}
+		else if (strcasecmp (protocol, \"cms\") == 0) {
+			$var = GPGME_PROTOCOL_CMS;
+		}
+		else {
+			croak (\"unknown protocol\");
+		}
+	}
+
+GPGME_KEYLIST_MODE_T
+	{
+		char *keylist_mode = SvPV_nolen ($arg);
+
+		if (strcasecmp (keylist_mode, \"local\") == 0) {
+			$var = GPGME_KEYLIST_MODE_LOCAL;
+		}
+		else if (strcasecmp (keylist_mode, \"extern\") == 0) {
+			$var = GPGME_KEYLIST_MODE_EXTERN;
+		}
+		else if (strcasecmp (keylist_mode, \"sigs\") == 0) {
+			$var = GPGME_KEYLIST_MODE_SIGS;
+		}
+		else if (strcasecmp (keylist_mode, \"sig-notations\") == 0) {
+			$var = GPGME_KEYLIST_MODE_SIG_NOTATIONS;
+		}
+		else if (strcasecmp (keylist_mode, \"validate\") == 0) {
+			$var = GPGME_KEYLIST_MODE_VALIDATE;
+		}
+		else {
+			croak (\"unknown keylist mode\");
+		}
+	}
