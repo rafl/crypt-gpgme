@@ -75,7 +75,7 @@ perl_gpgme_callback_t *perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int
 
 void perl_gpgme_callback_destroy (perl_gpgme_callback_t *cb);
 
-void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...);
+void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t *retvals, ...);
 
 SV *perl_gpgme_protocol_to_string (gpgme_protocol_t protocol);
 

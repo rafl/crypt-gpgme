@@ -3,12 +3,10 @@
 gpgme_error_t
 perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd) {
 	char *buf;
-	perl_gpgme_callback_retval_t *retvals;
+	perl_gpgme_callback_retval_t retvals[1];
 	perl_gpgme_callback_t *cb = (perl_gpgme_callback_t *)user_data;
 
-	retvals = (perl_gpgme_callback_retval_t *)malloc (sizeof (perl_gpgme_callback_retval_t) * 1);
-
-	perl_gpgme_callback_invoke (cb, &retvals, uid_hint, passphrase_info, prev_was_bad, fd);
+	perl_gpgme_callback_invoke (cb, retvals, uid_hint, passphrase_info, prev_was_bad, fd);
 
 	buf = (char *)retvals[0];
 
@@ -16,7 +14,6 @@ perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *pas
 	write (fd, "\n", 1);
 
 	free (buf);
-	free (retvals);
 
 	return 0; /* FIXME */
 }
@@ -185,7 +182,7 @@ gpgme_ctx_get_engine_info (ctx)
 			XPUSHs (sv);
 		}
 
-MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_ctx_
+MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
 
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
