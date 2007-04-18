@@ -166,15 +166,20 @@ gpgme_set_locale (ctx, category, value)
 		int category
 		const char *value
 
-MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_ctx_
-
 void
-gpgme_ctx_get_engine_info (ctx)
-		gpgme_ctx_t ctx
+gpgme_get_engine_info (ctx)
+		perl_gpgme_ctx_or_null_t ctx
 	PREINIT:
 		gpgme_engine_info_t info, i;
 	PPCODE:
-		info = gpgme_ctx_get_engine_info (ctx);
+		if (ctx == NULL) {
+			gpgme_error_t err;
+			err = gpgme_get_engine_info (&info);
+			perl_gpgme_assert_error (err);
+		}
+		else {
+			info = gpgme_ctx_get_engine_info (ctx);
+		}
 
 		for (i = info; i != NULL; i = i->next) {
 			SV *sv = perl_gpgme_hashref_from_engine_info (i);
@@ -183,15 +188,20 @@ gpgme_ctx_get_engine_info (ctx)
 		}
 
 NO_OUTPUT gpgme_error_t
-gpgme_ctx_set_engine_info (ctx, proto, file_name, home_dir)
-		gpgme_ctx_t ctx
+gpgme_set_engine_info (ctx, proto, file_name, home_dir)
+		perl_gpgme_ctx_or_null_t ctx
 		gpgme_protocol_t proto
 		const char *file_name
 		const char *home_dir
+	CODE:
+		if (ctx == NULL) {
+			RETVAL = gpgme_set_engine_info (proto, file_name, home_dir);
+		}
+		else {
+			RETVAL = gpgme_ctx_set_engine_info (ctx, proto, file_name, home_dir);
+		}
 	POSTCALL:
 		perl_gpgme_assert_error (RETVAL);
-
-MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
 
 void
 gpgme_signers_clear (ctx)
