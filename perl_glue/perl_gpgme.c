@@ -56,7 +56,7 @@ perl_gpgme_assert_error (gpgme_error_t err) {
 }
 
 perl_gpgme_callback_t *
-perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_callback_param_type_t param_types[]) {
+perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_callback_param_type_t param_types[], int n_retvals, perl_gpgme_callback_retval_type_t retval_types[]) {
 	perl_gpgme_callback_t *cb;
 
 	cb = (perl_gpgme_callback_t *)malloc (sizeof (perl_gpgme_callback_t));
@@ -84,6 +84,17 @@ perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_c
 		memcpy (cb->param_types, param_types, n_params * sizeof (perl_gpgme_callback_param_type_t));
 	}
 
+	cb->n_retvals = n_retvals;
+
+	if (cb->n_retvals) {
+		if (!retval_types) {
+			croak ("n_retvals is %d, but retval_types is NULL", n_retvals);
+		}
+
+		cb->retval_types = (perl_gpgme_callback_retval_type_t *)malloc (sizeof (perl_gpgme_callback_retval_type_t) * n_retvals);
+		memcpy (cb->retval_types, retval_types, n_retvals * sizeof (perl_gpgme_callback_retval_type_t));
+	}
+
 #ifdef PERL_IMPLICIT_CONTEXT
 	cb->priv = aTHX;
 #endif
@@ -92,8 +103,9 @@ perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_c
 }
 
 void
-perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, ...) {
+perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...) {
 	va_list va_args;
+	int ret, i;
 
 	dPERL_GPGME_CALLBACK_MARSHAL_SP;
 
@@ -112,12 +124,10 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, ...) {
 		XPUSHs (cb->obj);
 	}
 
-	va_start (va_args, cb);
+	va_start (va_args, retvals);
 
 	/* TODO: EXTEND first */
 	if (cb->n_params > 0) {
-		int i;
-
 		for (i = 0; i < cb->n_params; i++) {
 			SV *sv;
 
@@ -151,8 +161,27 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, ...) {
 
 	PUTBACK;
 
-	call_sv (cb->func, G_DISCARD); /* TODO: return values needed */
+	ret = call_sv (cb->func, G_ARRAY);
 
+	SPAGAIN;
+
+	if (ret != cb->n_retvals) {
+		PUTBACK;
+		croak ("callback didn't return as much values as expected (got: %d, expected: %d)", ret, cb->n_retvals);
+	}
+
+	for (i = 0; i < ret; i++) {
+		switch (cb->retval_types[i]) {
+			case PERL_GPGME_CALLBACK_RETVAL_TYPE_STR:
+				*retvals[i] = (perl_gpgme_callback_retval_t)malloc (sizeof (char *));
+				*retvals[i] = (perl_gpgme_callback_retval_t)POPp;
+			default:
+				PUTBACK;
+				croak ("unknown perl_gpgme_callback_retval_type_t");
+		}
+	}
+
+	PUTBACK;
 	FREETMPS;
 	LEAVE;
 }

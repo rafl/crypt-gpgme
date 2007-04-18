@@ -40,12 +40,20 @@ typedef enum {
 	PERL_GPGME_CALLBACK_PARAM_TYPE_INT
 } perl_gpgme_callback_param_type_t;
 
+typedef enum {
+	PERL_GPGME_CALLBACK_RETVAL_TYPE_STR
+} perl_gpgme_callback_retval_type_t;
+
+typedef void * perl_gpgme_callback_retval_t;
+
 typedef struct perl_gpgme_callback_St {
 	SV *func;
 	SV *data;
 	SV *obj;
 	int n_params;
 	perl_gpgme_callback_param_type_t *param_types;
+	int n_retvals;
+	perl_gpgme_callback_retval_type_t *retval_types;
 	void *priv;
 } perl_gpgme_callback_t;
 
@@ -59,6 +67,6 @@ MAGIC *perl_gpgme_get_magic_from_sv (SV *sv, const char *class);
 
 void perl_gpgme_assert_error (gpgme_error_t err);
 
-perl_gpgme_callback_t *perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_callback_param_type_t param_types[]);
+perl_gpgme_callback_t *perl_gpgme_callback_new (SV *func, SV *data, SV *obj, int n_params, perl_gpgme_callback_param_type_t param_types[], int n_retvals, perl_gpgme_callback_retval_type_t retval_types[]);
 
-void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, ...);
+void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...);
