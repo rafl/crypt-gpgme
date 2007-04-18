@@ -169,9 +169,23 @@ gpgme_set_locale (ctx, category, value)
 		int category
 		const char *value
 
-gpgme_engine_info_t
+MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_ctx_
+
+void
 gpgme_ctx_get_engine_info (ctx)
 		gpgme_ctx_t ctx
+	PREINIT:
+		gpgme_engine_info_t info, i;
+	PPCODE:
+		info = gpgme_ctx_get_engine_info (ctx);
+
+		for (i = info; i != NULL; i = i->next) {
+			SV *sv = perl_gpgme_hashref_from_engine_info (i);
+			sv_2mortal (sv);
+			XPUSHs (sv);
+		}
+
+MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_ctx_
 
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)

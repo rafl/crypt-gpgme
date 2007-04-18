@@ -238,3 +238,51 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 	FREETMPS;
 	LEAVE;
 }
+
+SV *
+perl_gpgme_protocol_to_string (gpgme_protocol_t protocol) {
+	SV *ret;
+
+	switch (protocol) {
+		case GPGME_PROTOCOL_OpenPGP:
+			ret = newSVpvn ("openpgp", 7);
+			break;
+		case GPGME_PROTOCOL_CMS:
+			ret = newSVpvn ("cms", 3);
+			break;
+		default:
+			croak ("unknown protocol");
+	}
+
+	return ret;
+}
+
+SV *
+perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info) {
+	SV *sv;
+	HV *hv;
+
+	hv = newHV ();
+
+	/* TODO: error checking */
+	if (info->file_name) {
+		hv_store (hv, "file_name", 9, newSVpv (info->file_name, 0), 0);
+	}
+
+	if (info->home_dir) {
+		hv_store (hv, "home_dir", 8, newSVpv (info->home_dir, 0), 0);
+	}
+
+	if (info->version) {
+		hv_store (hv, "version", 7, newSVpv (info->version, 0), 0);
+	}
+
+	if (info->req_version) {
+		hv_store (hv, "req_version", 11, newSVpv (info->req_version, 0), 0);
+	}
+
+	hv_store (hv, "protocol", 8, perl_gpgme_protocol_to_string (info->protocol), 0);
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}

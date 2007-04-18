@@ -12,16 +12,7 @@ GPGME_CTX_T
 	$arg = perl_gpgme_new_sv_from_ptr ($var, \"Crypt::GpgME\");
 
 GPGME_PROTOCOL_T
-	switch ($var) {
-		case GPGME_PROTOCOL_OpenPGP:
-			$arg = newSVpvn ("openpgp", 7);
-			break;
-		case GPGME_PROTOCOL_CMS:
-			$arg = newSVpvn ("cms", 3);
-			break;
-		default:
-			croak (\"unknown protocol\");
-	}
+	$arg = perl_gpgme_protocol_to_string ($var);
 
 GPGME_KEYLIST_MODE_T
 	switch ($var) {
