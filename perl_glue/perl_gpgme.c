@@ -140,6 +140,7 @@ void
 perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retval_t **retvals, ...) {
 	va_list va_args;
 	int ret, i;
+	I32 call_flags;
 
 	dPERL_GPGME_CALLBACK_MARSHAL_SP;
 
@@ -172,6 +173,14 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 				case PERL_GPGME_CALLBACK_PARAM_TYPE_INT:
 					sv = newSViv (va_arg (va_args, int));
 					break;
+				case PERL_GPGME_CALLBACK_PARAM_TYPE_CHAR: {
+					char tmp[2];
+					tmp[0] = va_arg (va_args, int);
+					tmp[1] = '\0';
+
+					sv = newSVpv (tmp, 2);
+					break;
+				}
 				default:
 					PUTBACK;
 					croak ("unknown perl_gpgme_callback_param_type_t");
@@ -195,7 +204,17 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 
 	PUTBACK;
 
-	ret = call_sv (cb->func, G_ARRAY);
+	if (cb->n_retvals == 0) {
+		call_flags = G_VOID|G_DISCARD;
+	}
+	else if (cb->n_retvals == 1) {
+		call_flags = G_SCALAR;
+	}
+	else {
+		call_flags = G_ARRAY;
+	}
+
+	ret = call_sv (cb->func, call_flags);
 
 	SPAGAIN;
 

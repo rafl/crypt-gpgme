@@ -16,8 +16,16 @@ perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *pas
 	write (fd, "\n", 1);
 
 	free (buf);
+	free (retvals);
 
 	return 0; /* FIXME */
+}
+
+void
+perl_gpgme_progress_cb (void *user_data, const char *what, int type, int current, int total) {
+	perl_gpgme_callback_t *cb = (perl_gpgme_callback_t *)user_data;
+
+	perl_gpgme_callback_invoke (cb, NULL, what, type, current, total);
 }
 
 MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
@@ -127,11 +135,43 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 
 		gpgme_set_passphrase_cb (c_ctx, perl_gpgme_passphrase_cb, cb);
 
+void
+gpgme_set_progress_cb (ctx, func, user_data=NULL)
+		SV *ctx
+		SV *func
+		SV *user_data
+	PREINIT:
+		perl_gpgme_callback_t *cb = NULL;
+		perl_gpgme_callback_param_type_t param_types[4];
+		gpgme_ctx_t c_ctx;
+		gpgme_progress_cb_t prog_cb;
+	INIT:
+		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR;  /* what */
+		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_CHAR; /* type */
+		param_types[2] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT;  /* current */
+		param_types[3] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT;  /* total */
+	CODE:
+		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
+
+		gpgme_get_progress_cb (c_ctx, &prog_cb, (void **)&cb);
+
+		if (cb) {
+			perl_gpgme_callback_destroy (cb);
+		}
+
+		cb = perl_gpgme_callback_new (func, user_data, ctx, 4, param_types, 0, NULL);
+
+		gpgme_set_progress_cb (c_ctx, perl_gpgme_progress_cb, cb);
+
 NO_OUTPUT gpgme_error_t
 gpgme_set_locale (ctx, category, value)
 		perl_gpgme_ctx_or_null_t ctx
 		int category
 		const char *value
+
+gpgme_engine_info_t
+gpgme_ctx_get_engine_info (ctx)
+		gpgme_ctx_t ctx
 
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
