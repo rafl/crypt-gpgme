@@ -3,6 +3,8 @@ gpgme_ctx_t	GPGME_CTX_T
 perl_gpgme_ctx_or_null_t	PERL_GPGME_CTX_OR_NULL_T
 gpgme_protocol_t	GPGME_PROTOCOL_T
 gpgme_keylist_mode_t	GPGME_KEYLIST_MODE_T
+gpgme_data_t	GPGME_DATA_T
+gpgme_sig_mode_t	GPGME_SIG_MODE_T
 
 OUTPUT
 
@@ -41,6 +43,9 @@ GPGME_KEYLIST_MODE_T
 		default:
 			croak (\"unknown keylist mode\");
 	}
+
+GPGME_DATA_T
+	$arg = perl_gpgme_new_sv_from_ptr ($var, \"Crypt::GpgME::Data\");
 
 INPUT
 
@@ -91,5 +96,26 @@ GPGME_KEYLIST_MODE_T
 		}
 		else {
 			croak (\"unknown keylist mode\");
+		}
+	}
+
+GPGME_DATA_T
+	$var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME::Data\");
+
+GPGME_SIG_MODE_T
+	{
+		char *sig_mode = SvPV_nolen ($arg);
+
+		if (strcasecmp (sig_mode, \"normal\") == 0) {
+			$var = GPGME_SIG_MODE_NORMAL;
+		}
+		else if (strcasecmp (sig_mode, \"detach\") == 0) {
+			$var = GPGME_SIG_MODE_DETACH;
+		}
+		else if (strcasecmp (sig_mode, \"clear\") == 0) {
+			$var = GPGME_SIG_MODE_CLEAR;
+		}
+		else {
+			croak (\"unknown sig mode\");
 		}
 	}
