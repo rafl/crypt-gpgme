@@ -52,7 +52,7 @@ perl_gpgme_assert_error (gpgme_error_t err) {
 		return;
 	}
 
-	croak ("some error occured"); /* TODO */
+	croak ("%s: %s", gpgme_strsource (err), gpgme_strerror (err));
 }
 
 perl_gpgme_callback_t *
