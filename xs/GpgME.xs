@@ -280,6 +280,15 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	OUTPUT:
 		RETVAL
 
+NO_OUTPUT gpgme_error_t
+gpgme_engine_check_version (ctx, proto)
+		perl_gpgme_ctx_or_null_t ctx
+		gpgme_protocol_t proto
+	C_ARGS:
+		proto
+	POSTCALL:
+		perl_gpgme_assert_error (RETVAL);
+
 BOOT:
 	gpgme_check_version (NULL);
 	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Key);
