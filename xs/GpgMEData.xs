@@ -33,12 +33,23 @@ gpgme_data_read (data, sv, size)
 		free (buffer);
 
 ssize_t
-gpgme_data_write (data, buffer, size=SvLEN (buffer))
+gpgme_data_write (data, sv, size=0)
 		gpgme_data_t data
-		SV *buffer
+		SV *sv
 		size_t size
+	PREINIT:
+		char *buffer;
 	INIT:
-		SvUPGRADE (buffer, SVt_PV);
-		SvGROW (buffer, size);
+		if (!size) {
+			buffer = SvPV (sv, size);
+		}
+		else {
+			STRLEN tmp_size;
+			buffer = SvPV (sv, tmp_size);
+
+			if (size > tmp_size) {
+				size = tmp_size;
+			}
+		}
 	C_ARGS:
-		data, SvPVX (buffer), size
+		data, buffer, size
