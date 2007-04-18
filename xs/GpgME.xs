@@ -193,6 +193,10 @@ gpgme_ctx_set_engine_info (ctx, proto, file_name, home_dir)
 
 MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
 
+void
+gpgme_signers_clear (ctx)
+		gpgme_ctx_t ctx
+
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 		gpgme_ctx_t ctx
