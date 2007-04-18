@@ -260,7 +260,7 @@ NO_OUTPUT gpgme_error_t
 gpgme_cancel (ctx)
 		gpgme_ctx_t ctx
 	POSTCALL:
-		perl_gpgme_assert_error (err);
+		perl_gpgme_assert_error (RETVAL);
 
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
