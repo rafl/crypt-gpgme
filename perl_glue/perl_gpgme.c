@@ -479,7 +479,7 @@ perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation) {
 		hv_store (hv, "value", 5, newSVpv (notation->value, notation->value_len), 0);
 	}
 
-	/* Don't store the flags. It's human_readable | critical anyway */
+	/* TODO: store flags as array ref of strings - see input typemap */
 
 	hv_store (hv, "human_readable", 14, newSVuv (notation->human_readable), 0);
 	hv_store (hv, "critical", 8, newSVuv (notation->critical), 0);
