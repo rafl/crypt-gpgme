@@ -270,6 +270,12 @@ gpgme_verify (ctx, sig, signed_text=NULL)
 		gpgme_error_t err;
 		gpgme_data_t plain = NULL;
 		gpgme_verify_result_t result;
+	INIT:
+		gpgme_data_seek (sig, 0, SEEK_SET);
+
+		if (signed_text) {
+			gpgme_data_seek (signed_text, 0, SEEK_SET);
+		}
 	PPCODE:
 		if (!signed_text) {
 			err = gpgme_data_new (&plain);
