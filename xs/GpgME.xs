@@ -297,6 +297,8 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	INIT:
 		err = gpgme_data_new (&RETVAL);
 		perl_gpgme_assert_error (err);
+
+		gpgme_data_seek (plain, 0, SEEK_SET);
 	CODE:
 		err = gpgme_op_sign (ctx, plain, RETVAL, mode);
 	POSTCALL:
