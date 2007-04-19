@@ -174,11 +174,10 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 					sv = newSViv (va_arg (va_args, int));
 					break;
 				case PERL_GPGME_CALLBACK_PARAM_TYPE_CHAR: {
-					char tmp[2];
+					char tmp[0];
 					tmp[0] = va_arg (va_args, int);
-					tmp[1] = '\0';
 
-					sv = newSVpv (tmp, 2);
+					sv = newSVpv (tmp, 1);
 					break;
 				}
 				default:
