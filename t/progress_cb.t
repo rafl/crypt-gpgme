@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 39;
+use Test::More tests => 24;
 use Test::Exception;
 use Scalar::Util qw/looks_like_number/;
 
@@ -28,6 +28,8 @@ $ctx->set_passphrase_cb(sub { return 'abc' });
 my $called = 0;
 
 sub progress_cb {
+    return if $called;
+
     is (@_, 5, 'cb got 5 params');
 
     my ($c, $what, $type, $current, $total) = @_;
@@ -48,13 +50,15 @@ lives_ok (sub {
 
 is ($called, 0, 'just setting the cb doesn\'t call it');
 
-    $ctx->sign($plain, 'clear');
+$ctx->sign($plain, 'clear');
 
 ok ($called > 0, 'signing calls the cb');
 
 $called = 0;
 
 sub progress_cb_ud {
+    return if $called;
+
     is (@_, 6, 'cb got 6 params');
 
     my ($c, $what, $type, $current, $total, $user_data) = @_;
