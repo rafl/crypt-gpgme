@@ -16,6 +16,36 @@ eval {
     __PACKAGE__->bootstrap( $VERSION );
 };
 
+sub import {
+    my ($base, @args) = @_;
+
+    my $do_init = 1;
+    my $init_version = undef;
+
+    while (my $arg = shift @args) {
+        if ($arg eq '-no-init') {
+            $do_init = 0;
+        }
+        elsif ($arg eq '-init') {
+            $do_init = 1;
+
+            if (!@args) {
+                require Carp;
+                Carp::croak ('-init requires a version number to pass to Crypt::GpgME->check_version');
+            }
+
+            $init_version = shift @args;
+        }
+        else {
+            $base->VERSION($arg);
+        }
+    }
+
+    if ($do_init) {
+        $base->check_version( defined $init_version ? $init_version : () );
+    }
+}
+
 1;
 
 __END__
