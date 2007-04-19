@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 24;
+use Test::More tests => 48;
 use Test::Exception;
 
 BEGIN {
@@ -10,6 +10,7 @@ BEGIN {
 }
 
 delete $ENV{GPG_AGENT_INFO};
+$ENV{GNUPGHOME} = 't/gpg';
 
 my $ctx;
 lives_ok (sub {
@@ -20,10 +21,6 @@ isa_ok ($ctx, 'Crypt::GpgME');
 
 my $plain = Crypt::GpgME::Data->new;
 $plain->write('test test test');
-
-lives_ok (sub {
-        $ctx->set_passphrase_cb(\&pass_cb);
-}, 'setting passphrase cb without user data');
 
 my $called = 0;
 
@@ -41,6 +38,40 @@ sub pass_cb {
 
     ++$called;
 }
+
+lives_ok (sub {
+        $ctx->set_passphrase_cb(\&pass_cb);
+}, 'setting passphrase cb without user data');
+
+is ($called, 0, 'just setting the cb doesn\'t call it');
+
+eval {
+    $ctx->sign($plain, 'clear');
+};
+
+ok ($called > 0, 'signing calls the cb');
+
+$called = 0;
+
+sub pass_cb_ud {
+    is (@_, 5, 'cb got 5 params');
+
+    my ($c, $uid_hint, $passphrase_info, $prev_was_bad, $user_data) = @_;
+
+    isa_ok ($c, 'Crypt::GpgME');
+    ok($c == $ctx, 'context references are equal');
+
+    like ($uid_hint, qr/^[A-F0-9]{16}\s+[^<]+\s+<[^>]+>$/, 'uid hint looks sane');
+    like ($passphrase_info, qr/^[A-F0-9]/, 'passphrase info looks sane');
+    is ($prev_was_bad, ! !$called % 3, 'prev_was_bad looks sane');
+    is ($user_data, 'foo', 'user data looks sane');
+
+    ++$called;
+}
+
+lives_ok (sub {
+        $ctx->set_passphrase_cb(\&pass_cb_ud, 'foo');
+}, 'setting passphrase cb with user data');
 
 is ($called, 0, 'just setting the cb doesn\'t call it');
 
