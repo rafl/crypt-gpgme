@@ -110,7 +110,7 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 		SV *user_data
 	PREINIT:
 		perl_gpgme_callback_t *cb = NULL;
-		perl_gpgme_callback_param_type_t param_types[4];
+		perl_gpgme_callback_param_type_t param_types[3];
 		perl_gpgme_callback_retval_type_t retval_types[1];
 		gpgme_ctx_t c_ctx;
 		gpgme_passphrase_cb_t pass_cb;
@@ -118,7 +118,6 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* uid_hint */
 		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* passphrase_info */
 		param_types[2] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT; /* prev_was_bad */
-		param_types[3] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT; /* fd */
 	CODE:
 		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
 
@@ -128,7 +127,7 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 			perl_gpgme_callback_destroy (cb);
 		}
 
-		cb = perl_gpgme_callback_new (func, user_data, ctx, 4, param_types, 1, retval_types);
+		cb = perl_gpgme_callback_new (func, user_data, ctx, 3, param_types, 1, retval_types);
 
 		gpgme_set_passphrase_cb (c_ctx, perl_gpgme_passphrase_cb, cb);
 
