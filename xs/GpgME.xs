@@ -316,7 +316,12 @@ gpgme_engine_check_version (ctx, proto)
 	POSTCALL:
 		perl_gpgme_assert_error (RETVAL);
 
+const char *
+gpgme_check_version (class, version=NULL)
+		const char *version
+	C_ARGS:
+		version
+
 BOOT:
-	gpgme_check_version (NULL);
 	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Key);
 	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Data);
