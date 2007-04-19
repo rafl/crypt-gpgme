@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 11;
 use Test::Exception;
 
 BEGIN {
@@ -42,3 +42,13 @@ while ($signed->read(my $buf, 1024) > 0) {
 }
 
 like ($signed_text, qr/$data/, 'signed text looks sane');
+
+my $result;
+my $verify_plain;
+lives_ok (sub {
+        ($result, $verify_plain) = $ctx->verify($signed);
+}, 'verify');
+
+isa_ok ($verify_plain, 'Crypt::GpgME::Data');
+
+is (ref $result, 'HASH', 'result is a hash ref');
