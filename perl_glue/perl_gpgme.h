@@ -94,3 +94,9 @@ SV *perl_gpgme_hashref_from_signature (gpgme_key_sig_t sig);
 SV *perl_gpgme_array_ref_from_notations (gpgme_sig_notation_t notations);
 
 SV *perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation);
+
+SV *perl_gpgme_hashref_from_verify_result (gpgme_verify_result_t result);
+
+SV *perl_gpgme_array_ref_from_verify_signatures (gpgme_signature_t sigs);
+
+SV *perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig);

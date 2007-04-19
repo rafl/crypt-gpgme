@@ -262,6 +262,32 @@ gpgme_cancel (ctx)
 	POSTCALL:
 		perl_gpgme_assert_error (RETVAL);
 
+void
+gpgme_verify (ctx, sig, signed_text=NULL)
+		gpgme_ctx_t ctx
+		gpgme_data_t sig
+		gpgme_data_t signed_text
+	PREINIT:
+		gpgme_error_t err;
+		gpgme_data_t plain = NULL;
+		gpgme_verify_result_t result;
+	PPCODE:
+		if (!signed_text) {
+			err = gpgme_data_new (&plain);
+			perl_gpgme_assert_error (err);
+		}
+
+		err = gpgme_op_verify (ctx, sig, signed_text, plain);
+		perl_gpgme_assert_error (err);
+
+		result = gpgme_op_verify_result (ctx);
+
+		XPUSHs (sv_2mortal (perl_gpgme_hashref_from_verify_result (result)));
+
+		if (!signed_text) {
+			XPUSHs (sv_2mortal (perl_gpgme_new_sv_from_ptr (plain, "Crypt::GpgME::Data")));
+		}
+
 gpgme_data_t
 gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 		gpgme_ctx_t ctx

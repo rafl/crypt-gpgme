@@ -394,6 +394,8 @@ perl_gpgme_array_ref_from_signatures (gpgme_key_sig_t sig) {
 	AV *av;
 	gpgme_key_sig_t i;
 
+	av = newAV ();
+
 	for (i = sig; i != NULL; i = i->next) {
 		av_push (av, perl_gpgme_hashref_from_signature (i));
 	}
@@ -406,6 +408,8 @@ SV *
 perl_gpgme_hashref_from_signature (gpgme_key_sig_t sig) {
 	SV *sv;
 	HV *hv;
+
+	hv = newHV ();
 
 	/* TODO: error checking */
 	hv_store (hv, "revoked", 7, newSVuv (sig->revoked), 0);
@@ -458,6 +462,8 @@ perl_gpgme_array_ref_from_notations (gpgme_sig_notation_t notations) {
 	AV *av;
 	gpgme_sig_notation_t i;
 
+	av = newAV ();
+
 	for (i = notations; i != NULL; i = i->next) {
 		av_push (av, perl_gpgme_hashref_from_notation (i));
 	}
@@ -470,6 +476,8 @@ SV *
 perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation) {
 	SV *sv;
 	HV *hv;
+
+	hv = newHV ();
 
 	if (notation->name) {
 		hv_store (hv, "name", 4, newSVpv (notation->name, notation->name_len), 0);
@@ -516,4 +524,73 @@ perl_gpgme_validity_to_string (gpgme_validity_t validity) {
 	}
 
 	return ret;
+}
+
+SV *
+perl_gpgme_hashref_from_verify_result (gpgme_verify_result_t result) {
+	SV *sv;
+	HV *hv;
+
+	hv = newHV ();
+
+	if (result->file_name) {
+		hv_store (hv, "file_name", 9, newSVpv (result->file_name, 0), 0);
+	}
+
+	if (result->signatures) {
+		hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_verify_signatures (result->signatures), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
+
+SV *
+perl_gpgme_array_ref_from_verify_signatures (gpgme_signature_t sig) {
+	SV *sv;
+	AV *av;
+	gpgme_signature_t i;
+
+	av = newAV ();
+
+	for (i = sig; i != NULL; i = i->next) {
+		av_push (av, perl_gpgme_hashref_from_verify_signature (i));
+	}
+
+	sv = newRV_noinc ((SV *)av);
+	return sv;
+}
+
+SV *
+perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig) {
+	SV *sv;
+	HV *hv;
+
+	hv = newHV ();
+
+	/* TODO: summary */
+
+	if (sig->fpr) {
+		hv_store (hv, "fpr", 3, newSVpv (sig->fpr, 0), 0);
+	}
+
+	if (sig->status != GPG_ERR_NO_ERROR) {
+		hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+	}
+
+	/* TODO: notations */
+
+	hv_store (hv, "timestamp", 9, newSVuv (sig->timestamp), 0); /* FIXME: long uint vs. UV */
+	hv_store (hv, "exp_timestamp", 13, newSVuv (sig->exp_timestamp), 0); /* ditto */
+	hv_store (hv, "wrong_key_usage", 15, newSVuv (sig->wrong_key_usage), 0);
+	hv_store (hv, "pka_trust", 9, newSVuv (sig->pka_trust), 0);
+
+	/* TODO: validity, validity_reason, pubkey_algo, hash_algo */
+
+	if (sig->pka_address) {
+		hv_store (hv, "pka_address", 11, newSVpv (sig->pka_address, 0), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
 }
