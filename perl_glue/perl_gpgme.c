@@ -26,9 +26,7 @@ void *
 perl_gpgme_get_ptr_from_sv (SV *sv, const char *class) {
 	MAGIC *mg;
 
-	if (!(mg = perl_gpgme_get_magic_from_sv (sv, class))) {
-		return NULL; /* TODO: croak? */
-	}
+	mg = perl_gpgme_get_magic_from_sv (sv, class);
 
 	return (void *)mg->mg_ptr;
 }
@@ -40,7 +38,7 @@ perl_gpgme_get_magic_from_sv (SV *sv, const char *class) {
 	if (!sv || !SvOK (sv) || !SvROK (sv)
 	 || (class && !sv_derived_from (sv, class))
 	 || !(mg = mg_find (SvRV (sv), PERL_MAGIC_ext))) {
-		return NULL; /* TODO: croak? */
+		croak ("invalid object");
 	}
 
 	return mg;
