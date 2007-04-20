@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More tests => 48;
 use Test::Exception;
+use IO::Scalar;
 
 BEGIN {
 	use_ok( 'Crypt::GpgME' );
@@ -19,8 +20,7 @@ lives_ok (sub {
 
 isa_ok ($ctx, 'Crypt::GpgME');
 
-my $plain = Crypt::GpgME::Data->new;
-$plain->write('test test test');
+my $plain = IO::Scalar->new(\q/test test test/);
 
 my $called = 0;
 

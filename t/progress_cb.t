@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More tests => 24;
 use Test::Exception;
+use IO::Scalar;
 use Scalar::Util qw/looks_like_number/;
 
 BEGIN {
@@ -20,8 +21,7 @@ lives_ok (sub {
 
 isa_ok ($ctx, 'Crypt::GpgME');
 
-my $plain = Crypt::GpgME::Data->new;
-$plain->write('test test test');
+my $plain = IO::Scalar->new(\q/test test test/);
 
 $ctx->set_passphrase_cb(sub { return 'abc' });
 
