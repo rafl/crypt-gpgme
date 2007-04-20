@@ -11,3 +11,6 @@ perl_glue/*.o
 cover_db
 t/gpg/random_seed
 *~
+MANIFEST
+MANIFEST.bak
+Crypt-GpgME-*
