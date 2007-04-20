@@ -290,7 +290,7 @@ gpgme_verify (ctx, sig, signed_text=NULL)
 		XPUSHs (sv_2mortal (perl_gpgme_hashref_from_verify_result (result)));
 
 		if (!signed_text) {
-			XPUSHs (sv_2mortal (perl_gpgme_new_sv_from_ptr (plain, "Crypt::GpgME::Data")));
+			XPUSHs (sv_2mortal (perl_gpgme_data_to_sv (plain)));
 		}
 
 gpgme_data_t
@@ -341,4 +341,3 @@ gpgme_check_version (class, version=NULL)
 
 BOOT:
 	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Key);
-	PERL_GPGME_CALL_BOOT (boot_Crypt__GpgME__Data);
