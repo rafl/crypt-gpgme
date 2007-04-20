@@ -25,20 +25,17 @@ GPGME_KEYLIST_MODE_T
 		if ($var & GPGME_KEYLIST_MODE_LOCAL) {
 			av_push (av, newSVpvn (\"local\", 5));
 		}
-		else if ($var & GPGME_KEYLIST_MODE_EXTERN) {
+		if ($var & GPGME_KEYLIST_MODE_EXTERN) {
 			av_push (av, newSVpvn (\"extern\", 6));
 		}
-		else if ($var & GPGME_KEYLIST_MODE_SIGS) {
+		if ($var & GPGME_KEYLIST_MODE_SIGS) {
 			av_push (av, newSVpvn (\"sigs\", 4));
 		}
-		else if ($var & GPGME_KEYLIST_MODE_SIG_NOTATIONS) {
+		if ($var & GPGME_KEYLIST_MODE_SIG_NOTATIONS) {
 			av_push (av, newSVpvn (\"sig-notations\", 13));
 		}
-		else if ($var & GPGME_KEYLIST_MODE_VALIDATE) {
+		if ($var & GPGME_KEYLIST_MODE_VALIDATE) {
 			av_push (av, newSVpvn (\"validate\", 8));
-		}
-		else {
-			croak (\"unknown keylist mode\");
 		}
 
 		$arg = newRV_noinc ((SV *)av);

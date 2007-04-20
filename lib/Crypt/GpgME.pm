@@ -2,6 +2,7 @@ package Crypt::GpgME;
 
 use strict;
 use warnings;
+use IO::Scalar;
 
 our $VERSION = '0.01';
 our @ISA;
