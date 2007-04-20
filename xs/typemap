@@ -19,6 +19,7 @@ GPGME_PROTOCOL_T
 	$arg = perl_gpgme_protocol_to_string ($var);
 
 GPGME_KEYLIST_MODE_T
+	/* FIXME: seems to be a flag? */
 	switch ($var) {
 		case GPGME_KEYLIST_MODE_LOCAL:
 			$arg = newSVpvn (\"local\", 5);

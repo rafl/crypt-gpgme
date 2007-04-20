@@ -100,3 +100,7 @@ SV *perl_gpgme_hashref_from_verify_result (gpgme_verify_result_t result);
 SV *perl_gpgme_array_ref_from_verify_signatures (gpgme_signature_t sigs);
 
 SV *perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig);
+
+SV *perl_gpgme_sigsum_to_string (gpgme_sigsum_t summary);
+
+SV *perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo);

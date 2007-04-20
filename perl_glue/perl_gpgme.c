@@ -565,7 +565,7 @@ perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig) {
 
 	hv = newHV ();
 
-	/* TODO: summary */
+	hv_store (hv, "summary", 7, perl_gpgme_sigsum_to_string (sig->summary), 0);
 
 	if (sig->fpr) {
 		hv_store (hv, "fpr", 3, newSVpv (sig->fpr, 0), 0);
@@ -575,14 +575,21 @@ perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig) {
 		hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
 	}
 
-	/* TODO: notations */
+	hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations), 0);
 
 	hv_store (hv, "timestamp", 9, newSVuv (sig->timestamp), 0); /* FIXME: long uint vs. UV */
 	hv_store (hv, "exp_timestamp", 13, newSVuv (sig->exp_timestamp), 0); /* ditto */
 	hv_store (hv, "wrong_key_usage", 15, newSVuv (sig->wrong_key_usage), 0);
 	hv_store (hv, "pka_trust", 9, newSVuv (sig->pka_trust), 0);
 
-	/* TODO: validity, validity_reason, pubkey_algo, hash_algo */
+	hv_store (hv, "validity", 8, perl_gpgme_validity_to_string (sig->validity), 0);
+
+	if (sig->validity_reason != GPG_ERR_NO_ERROR) {
+		hv_store (hv, "validity_reason", 15, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+	}
+
+	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo), 0);
+	hv_store (hv, "hash_algo", 9, perl_gpgme_hash_algo_to_string (sig->hash_algo), 0);
 
 	if (sig->pka_address) {
 		hv_store (hv, "pka_address", 11, newSVpv (sig->pka_address, 0), 0);
@@ -590,4 +597,111 @@ perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig) {
 
 	sv = newRV_noinc ((SV *)hv);
 	return sv;
+}
+
+SV *
+perl_gpgme_sigsum_to_string (gpgme_sigsum_t summary) {
+	SV *sv;
+	AV *av;
+
+	av = newAV ();
+
+	/* FIXME: is this really a flag */
+
+	if (summary & GPGME_SIGSUM_VALID) {
+		av_push (av, newSVpv ("valid", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_GREEN) {
+		av_push (av, newSVpv ("green", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_RED) {
+		av_push (av, newSVpv ("red", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_KEY_REVOKED) {
+		av_push (av, newSVpv ("key-revoked", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_KEY_EXPIRED) {
+		av_push (av, newSVpv ("key-expired", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_SIG_EXPIRED) {
+		av_push (av, newSVpv ("sig-expired", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_CRL_MISSING) {
+		av_push (av, newSVpv ("crl-missing", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_CRL_TOO_OLD) {
+		av_push (av, newSVpv ("crl-too-old", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_BAD_POLICY) {
+		av_push (av, newSVpv ("bad-policy", 0));
+	}
+
+	if (summary & GPGME_SIGSUM_SYS_ERROR) {
+		av_push (av, newSVpv ("sys-error", 0));
+	}
+
+	sv = newRV_noinc ((SV *)av);
+	return sv;
+}
+
+SV *
+perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo) {
+	SV *ret;
+
+	switch (algo) {
+		case GPGME_MD_NONE:
+			ret = newSVpv ("none", 0);
+			break;
+		case GPGME_MD_MD5:
+			ret = newSVpv ("md5", 0);
+			break;
+		case GPGME_MD_SHA1:
+			ret = newSVpv ("sha1", 0);
+			break;
+		case GPGME_MD_RMD160:
+			ret = newSVpv ("rmd160", 0);
+			break;
+		case GPGME_MD_MD2:
+			ret = newSVpv ("md2", 0);
+			break;
+		case GPGME_MD_TIGER:
+			ret = newSVpv ("tiger", 0);
+			break;
+		case GPGME_MD_HAVAL:
+			ret = newSVpv ("haval", 0);
+			break;
+		case GPGME_MD_SHA256:
+			ret = newSVpv ("sha256", 0);
+			break;
+		case GPGME_MD_SHA384:
+			ret = newSVpv ("sha384", 0);
+			break;
+		case GPGME_MD_SHA512:
+			ret = newSVpv ("sha512", 0);
+			break;
+		case GPGME_MD_MD4:
+			ret = newSVpv ("md4", 0);
+			break;
+		case GPGME_MD_CRC32:
+			ret = newSVpv ("crc32", 0);
+			break;
+		case GPGME_MD_CRC32_RFC1510:
+			ret = newSVpv ("crc32-rfc1510", 0);
+			break;
+		case GPGME_MD_CRC24_RFC2440:
+			ret = newSVpv ("crc24-rfc2440", 0);
+			break;
+		default:
+			croak ("unknown hash algo");
+	}
+
+	return ret;
 }
