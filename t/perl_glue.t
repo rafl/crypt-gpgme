@@ -16,3 +16,5 @@ my $fake_obj = bless [], 'Crypt::GpgME';
 throws_ok (sub {
         $fake_obj->sig_notation_clear;
 }, qr/invalid object/, 'calling methods on invalid objects');
+
+bless $fake_obj, 'Foo'; #to avoid a warning on destroy
