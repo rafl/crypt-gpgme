@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "perl_gpgme_data.h"
+
 
 #define PERL_GPGME_CALL_BOOT(name) \
 	{ \
