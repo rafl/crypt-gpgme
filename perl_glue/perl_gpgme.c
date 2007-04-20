@@ -323,16 +323,16 @@ perl_gpgme_hashref_from_subkey (gpgme_subkey_t subkey) {
 
 	/* TODO: error checking */
 	hv_store (hv, "revoked", 7, newSVuv (subkey->revoked), 0);
-	hv_store (hv, "expored", 7, newSVuv (subkey->expired), 0);
+	hv_store (hv, "expired", 7, newSVuv (subkey->expired), 0);
 	hv_store (hv, "disabled", 8, newSVuv (subkey->disabled), 0);
-	hv_store (hv, "invaid", 6, newSVuv (subkey->invalid), 0);
+	hv_store (hv, "invalid", 7, newSVuv (subkey->invalid), 0);
 	hv_store (hv, "can_encrypt", 11, newSVuv (subkey->can_encrypt), 0);
 	hv_store (hv, "can_sign", 8, newSVuv (subkey->can_sign), 0);
 	hv_store (hv, "can_certify", 11, newSVuv (subkey->can_certify), 0);
 	hv_store (hv, "secret", 6, newSVuv (subkey->secret), 0);
 	hv_store (hv, "can_authenticate", 16, newSVuv (subkey->can_authenticate), 0);
 	hv_store (hv, "is_qualified", 12, newSVuv (subkey->is_qualified), 0);
-	hv_store (hv, "pubkey_algo", 8, perl_gpgme_pubkey_algo_to_string (subkey->pubkey_algo), 0);
+	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (subkey->pubkey_algo), 0);
 	hv_store (hv, "length", 6, newSVuv (subkey->length), 0);
 
 	if (subkey->keyid) {
