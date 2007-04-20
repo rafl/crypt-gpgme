@@ -59,10 +59,32 @@ Version 0.01
 
 =head1 SYNOPSIS
 
+    use IO::File;
     use Crypt::GpgME;
 
-    my $foo = Crypt::GpgME->new();
-    ...
+    my $ctx = Crypt::GpgME->new;
+
+    $ctx->set_passphrase_cb(sub { 'abc' });
+
+    my $signed = $ctx->sign( IO::File->new('some_file', 'r') );
+
+    print while <$signed>;
+
+=head1 FUNCTIONS
+
+=head2 GPGME_VERSION
+
+    my $version = Crypt::GpgME->GPGME_VERSION;
+    my $version = $ctx->GPGME_VERSION;
+
+Returns a string containing the libgpgme version number this module has been
+compiled against.
+
+=head2 new
+
+    my $ctx = Crypt::GpgME->new;
+
+Returns a new Crypt::GpgME instance. Throws an exception on error.
 
 =head1 AUTHOR
 
