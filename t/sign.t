@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 9;
 use Test::Exception;
 use IO::Scalar;
 
@@ -39,5 +39,6 @@ lives_ok (sub {
 }, 'verify');
 
 isa_ok ($verify_plain, 'IO::Handle');
+is (do { local $/; <$verify_plain> }, "$data\n", 'verify plaintest matches');
 
 is (ref $result, 'HASH', 'result is a hash ref');
