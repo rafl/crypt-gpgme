@@ -1,0 +1,11 @@
+^xs/.*\.c$
+\.o$
+^pm_to_blib$
+^\.git
+^MANIFEST\.bak$
+^Makefile$
+^Makefile.old$
+\.bs$
+^t/gpg/random_seed$
+^Crypt-GpgME-
+^blib\b
