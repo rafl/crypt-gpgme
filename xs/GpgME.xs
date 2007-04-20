@@ -313,6 +313,28 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	OUTPUT:
 		RETVAL
 
+void
+gpgme_keylist (ctx, pattern, secret_only=0)
+		gpgme_ctx_t ctx
+		const char *pattern
+		int secret_only
+	PREINIT:
+		gpgme_error_t err;
+		gpgme_key_t key;
+	PPCODE:
+		err = gpgme_op_keylist_start (ctx, pattern, secret_only);
+		perl_gpgme_assert_error (err);
+
+		while ((err = gpgme_op_keylist_next (ctx, &key)) == GPG_ERR_NO_ERROR) {
+			XPUSHs (perl_gpgme_new_sv_from_ptr (key, "Crypt::GpgME::Key"));
+		}
+
+		/* although the error string says "EOF" err is != GPG_ERR_EOF
+		 * hardcoding the error code I'm getting.. FIXME! */
+		if (err != GPG_ERR_EOF && err != 117456895) {
+			perl_gpgme_assert_error (err);
+		}
+
 NO_OUTPUT gpgme_error_t
 gpgme_engine_check_version (ctx, proto)
 		perl_gpgme_ctx_or_null_t ctx
