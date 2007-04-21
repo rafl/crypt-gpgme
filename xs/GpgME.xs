@@ -331,7 +331,7 @@ gpgme_keylist (ctx, pattern, secret_only=0)
 
 		/* although the error string says "EOF" err is != GPG_ERR_EOF
 		 * hardcoding the error code I'm getting.. FIXME! */
-		if (err != GPG_ERR_EOF && err != 117456895) {
+		if (gpg_err_code (err) != GPG_ERR_EOF) {
 			perl_gpgme_assert_error (err);
 		}
 
