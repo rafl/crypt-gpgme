@@ -118,6 +118,7 @@ gpgme_set_passphrase_cb (ctx, func, user_data=NULL)
 		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* uid_hint */
 		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* passphrase_info */
 		param_types[2] = PERL_GPGME_CALLBACK_PARAM_TYPE_INT; /* prev_was_bad */
+		retval_types[0] = PERL_GPGME_CALLBACK_RETVAL_TYPE_STR; /* password */
 	CODE:
 		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
 
