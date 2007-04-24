@@ -117,6 +117,7 @@ perl_gpgme_data_seek (void *handle, off_t offset, int whence) {
 
 void
 perl_gpgme_data_release (void *handle) {
+	SvREFCNT_inc ((SV *)handle);
 }
 
 gpgme_data_t
