@@ -330,14 +330,14 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	OUTPUT:
 		RETVAL
 
-NO_OUTPUT gpgme_error_t
-gpgme_key_import (ctx, keydata)
-		gpgme_ctx_t ctx
-		gpgme_data_t keydata
-	CODE:
-		RETVAL = gpgme_op_import (ctx, keydata);
-	POSTCALL:
-		perl_gpgme_assert_error (RETVAL);
+#NO_OUTPUT gpgme_error_t
+#gpgme_key_import (ctx, keydata)
+#		gpgme_ctx_t ctx
+#		gpgme_data_t keydata
+#	CODE:
+#		RETVAL = gpgme_op_import (ctx, keydata);
+#	POSTCALL:
+#		perl_gpgme_assert_error (RETVAL);
 
 void
 gpgme_genkey (ctx, parms)
