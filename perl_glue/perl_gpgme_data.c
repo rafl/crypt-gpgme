@@ -165,7 +165,7 @@ perl_gpgme_data_to_sv (gpgme_data_t data) {
 	PUSHMARK (sp);
 
 	EXTEND (sp, 2);
-	mPUSHp ("IO::Scalar", 10);
+	mPUSHp ("Crypt::GpgME::Data", 18);
 	PUSHs (newRV_inc (buffer));
 
 	PUTBACK;

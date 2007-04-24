@@ -38,7 +38,7 @@ lives_ok (sub {
         ($result, $verify_plain) = $ctx->verify($signed);
 }, 'verify');
 
-isa_ok ($verify_plain, 'IO::Handle');
+isa_ok ($verify_plain, 'Crypt::GpgME::Data');
 is (do { local $/; <$verify_plain> }, "$data\n", 'verify plaintest matches');
 
 is (ref $result, 'HASH', 'result is a hash ref');

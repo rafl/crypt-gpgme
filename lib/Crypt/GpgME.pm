@@ -47,6 +47,12 @@ sub import {
     }
 }
 
+package Crypt::GpgME::Data;
+
+use strict;
+use warnings;
+use base qw/IO::Scalar/;
+
 1;
 
 __END__
