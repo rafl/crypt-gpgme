@@ -330,8 +330,6 @@ gpgme_keylist (ctx, pattern, secret_only=0)
 			XPUSHs (perl_gpgme_new_sv_from_ptr (key, "Crypt::GpgME::Key"));
 		}
 
-		/* although the error string says "EOF" err is != GPG_ERR_EOF
-		 * hardcoding the error code I'm getting.. FIXME! */
 		if (gpg_err_code (err) != GPG_ERR_EOF) {
 			perl_gpgme_assert_error (err);
 		}
