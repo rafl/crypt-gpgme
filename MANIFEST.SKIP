@@ -9,3 +9,5 @@
 ^t/gpg/random_seed$
 ^Crypt-GpgME-
 ^blib\b
+\.swp$
+~$
