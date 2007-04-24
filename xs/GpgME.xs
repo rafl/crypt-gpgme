@@ -331,7 +331,7 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 		RETVAL
 
 gpgme_data_t
-gpgme_edit (ctx, key, func, user_data)
+gpgme_edit (ctx, key, func, user_data=NULL)
 		SV *ctx
 		gpgme_key_t key
 		SV *func
@@ -343,14 +343,40 @@ gpgme_edit (ctx, key, func, user_data)
 		gpgme_ctx_t c_ctx;
 	INIT:
 		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS; /* status */
-		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* args */
-		retval_types[0] = PERL_GPGME_CALLBACK_RETVAL_TYPE_STR; /* result */
+		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR;    /* args */
+		retval_types[0] = PERL_GPGME_CALLBACK_RETVAL_TYPE_STR;  /* result */
 	CODE:
 		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
 
 		cb = perl_gpgme_callback_new (func, user_data, ctx, 2, param_types, 1, retval_types);
 		
 		gpgme_op_edit (c_ctx, key, perl_gpgme_edit_cb, cb, RETVAL);
+
+		perl_gpgme_callback_destroy (cb);
+	OUTPUT:
+		RETVAL
+
+gpgme_data_t
+gpgme_card_edit (ctx, key, func, user_data=NULL)
+		SV *ctx
+		gpgme_key_t key
+		SV *func
+		SV *user_data
+	PREINIT:
+		perl_gpgme_callback_t *cb = NULL;
+		perl_gpgme_callback_param_type_t param_types[2];
+		perl_gpgme_callback_retval_type_t retval_types[1];
+		gpgme_ctx_t c_ctx;
+	INIT:
+		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS; /* status */
+		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR;    /* args */
+		retval_types[0] = PERL_GPGME_CALLBACK_RETVAL_TYPE_STR;  /* result */
+	CODE:
+		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
+
+		cb = perl_gpgme_callback_new (func, user_data, ctx, 2, param_types, 1, retval_types);
+
+		gpgme_op_card_edit (c_ctx, key, perl_gpgme_edit_cb, cb, RETVAL);
 
 		perl_gpgme_callback_destroy (cb);
 	OUTPUT:
