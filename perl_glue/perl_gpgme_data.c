@@ -147,6 +147,42 @@ perl_gpgme_data_new (SV *sv) {
 }
 
 SV *
+perl_gpgme_data_io_handle_from_scalar (SV *scalar) {
+	dSP;
+	SV *sv;
+	int ret;
+
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK (sp);
+
+	EXTEND (sp, 2);
+	mPUSHp ("Crypt::GpgME::Data", 18);
+	PUSHs (newRV_inc (scalar));
+
+	PUTBACK;
+
+	ret = call_method ("new", G_SCALAR);
+
+	SPAGAIN;
+
+	if (ret != 1) {
+		PUTBACK;
+		croak ("TODO");
+	}
+
+	sv = POPs;
+	SvREFCNT_inc (sv); /* why? */
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+
+	return sv;
+}
+
+SV *
 perl_gpgme_data_to_sv (gpgme_data_t data) {
 	dSP;
 	SV *sv, *buffer;

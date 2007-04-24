@@ -123,12 +123,22 @@ GPGME_KEYLIST_MODE_T
 	}
 
 GPGME_DATA_T
-	if ($arg && SvOK ($arg) && sv_isobject ($arg) && sv_derived_from ($arg, \"IO::Handle\")) {
-		$var = ($type)perl_gpgme_data_from_io_handle ($arg);
-	}
-	else {
-		croak (\"not a valid IO::Handle\");
-		/* $var = ($type)perl_gpgme_get_ptr_from_sv ($arg, \"Crypt::GpgME::Data\"); */
+	{
+		SV *tmp;
+
+		if (!SvROK ($arg)) {
+			tmp = perl_gpgme_data_io_handle_from_scalar ($arg);
+		}
+		else {
+			tmp = $arg;
+		}
+
+		if (tmp && SvOK (tmp)  && sv_isobject (tmp) && sv_derived_from (tmp, \"IO::Handle\")) {
+			$var = ($type)perl_gpgme_data_from_io_handle (tmp);
+		}
+		else {
+			croak (\"not a valid IO::Handle\");
+		}
 	}
 
 GPGME_SIG_MODE_T

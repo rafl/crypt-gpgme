@@ -10,4 +10,6 @@ gpgme_data_t perl_gpgme_data_new (SV *sv);
 
 gpgme_data_t perl_gpgme_data_from_io_handle (SV *sv);
 
+SV *perl_gpgme_data_io_handle_from_scalar (SV *scalar);
+
 SV *perl_gpgme_data_to_sv (gpgme_data_t data);

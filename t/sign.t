@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Test::More tests => 9;
 use Test::Exception;
-use IO::Scalar;
 
 BEGIN {
 	use_ok( 'Crypt::GpgME' );
@@ -19,11 +18,10 @@ isa_ok ($ctx, 'Crypt::GpgME');
 $ctx->set_passphrase_cb(sub { 'abc' });
 
 my $data = 'test test test';
-my $plain = IO::Scalar->new(\$data);
 
 my $signed;
 lives_ok (sub {
-        $signed = $ctx->sign($plain, 'clear');
+        $signed = $ctx->sign($data, 'clear');
 }, 'clearsign');
 
 isa_ok ($signed, 'IO::Handle');
