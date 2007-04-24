@@ -1,5 +1,101 @@
 #include "perl_gpgme.h"
 
+static perl_gpgme_status_code_map_t perl_gpgme_status_code_map[] = {
+	{ GPGME_STATUS_EOF, "eof" },
+
+	{ GPGME_STATUS_ENTER, "enter" },
+	{ GPGME_STATUS_LEAVE, "leave" },
+	{ GPGME_STATUS_ABORT, "abort" },
+
+	{ GPGME_STATUS_GOODSIG, "goodsig" },
+	{ GPGME_STATUS_BADSIG, "badsig" },
+	{ GPGME_STATUS_ERRSIG, "errsig" },
+
+	{ GPGME_STATUS_BADARMOR, "badarmor" },
+
+	{ GPGME_STATUS_RSA_OR_IDEA, "rsa-or-idea" },
+	{ GPGME_STATUS_KEYEXPIRED, "keyexpired" },
+	{ GPGME_STATUS_KEYREVOKED, "keyrevoked" },
+
+	{ GPGME_STATUS_TRUST_UNDEFINED, "trust-undefined" },
+	{ GPGME_STATUS_TRUST_NEVER, "trust-never" },
+	{ GPGME_STATUS_TRUST_MARGINAL, "trust-marginal" },
+	{ GPGME_STATUS_TRUST_FULLY, "trust-fully" },
+	{ GPGME_STATUS_TRUST_ULTIMATE, "trust-ultimate" },
+
+	{ GPGME_STATUS_SHM_INFO, "shm-info" },
+	{ GPGME_STATUS_SHM_GET, "shm-get" },
+	{ GPGME_STATUS_SHM_GET_BOOL, "shm-get-bool" },
+	{ GPGME_STATUS_SHM_GET_HIDDEN, "shm-get-hidden" },
+
+	{ GPGME_STATUS_NEED_PASSPHRASE, "need-passphrase" },
+	{ GPGME_STATUS_VALIDSIG, "validsig" },
+	{ GPGME_STATUS_SIG_ID, "sig-id" },
+	{ GPGME_STATUS_ENC_TO, "enc-to" },
+	{ GPGME_STATUS_NODATA, "nodata" },
+	{ GPGME_STATUS_BAD_PASSPHRASE, "bad-passphrase" },
+	{ GPGME_STATUS_NO_PUBKEY, "no-pubkey" },
+	{ GPGME_STATUS_NO_SECKEY, "no-seckey" },
+	{ GPGME_STATUS_NEED_PASSPHRASE_SYM, "need-passphrase-sym" },
+	{ GPGME_STATUS_DECRYPTION_FAILED, "decryption-failed" },
+	{ GPGME_STATUS_DECRYPTION_OKAY, "decryption-okay" },
+	{ GPGME_STATUS_MISSING_PASSPHRASE, "missing-passphrase" },
+	{ GPGME_STATUS_GOOD_PASSPHRASE, "good-passphrase" },
+	{ GPGME_STATUS_GOODMDC, "goodmdc" },
+	{ GPGME_STATUS_BADMDC, "badmdc" },
+	{ GPGME_STATUS_ERRMDC, "errmdc" },
+	{ GPGME_STATUS_IMPORTED, "imported" },
+	{ GPGME_STATUS_IMPORT_OK, "import-ok" },
+	{ GPGME_STATUS_IMPORT_PROBLEM, "status-import-problem" },
+	{ GPGME_STATUS_IMPORT_RES, "import-res" },
+	{ GPGME_STATUS_FILE_START, "file-start" },
+	{ GPGME_STATUS_FILE_DONE, "file-done" },
+	{ GPGME_STATUS_FILE_ERROR, "file-error" },
+
+	{ GPGME_STATUS_BEGIN_DECRYPTION, "begin-decryption" },
+	{ GPGME_STATUS_END_DECRYPTION, "end-decryption" },
+	{ GPGME_STATUS_BEGIN_ENCRYPTION, "begin-encryption" },
+	{ GPGME_STATUS_END_ENCRYPTION, "end-encryption" },
+
+	{ GPGME_STATUS_DELETE_PROBLEM, "delete-problem" },
+	{ GPGME_STATUS_GET_BOOL, "get-bool" },
+	{ GPGME_STATUS_GET_LINE, "get-line" },
+	{ GPGME_STATUS_GET_HIDDEN, "get-hidden" },
+	{ GPGME_STATUS_GOT_IT, "got-it" },
+	{ GPGME_STATUS_PROGRESS, "progress" },
+	{ GPGME_STATUS_SIG_CREATED, "sig-created" },
+	{ GPGME_STATUS_SESSION_KEY, "session-key" },
+	{ GPGME_STATUS_NOTATION_NAME, "notation-name" },
+	{ GPGME_STATUS_NOTATION_DATA, "notation-data" },
+	{ GPGME_STATUS_POLICY_URL, "policy-url" },
+	{ GPGME_STATUS_BEGIN_STREAM, "begin-stream" },
+	{ GPGME_STATUS_END_STREAM, "end-stream" },
+	{ GPGME_STATUS_KEY_CREATED, "key-created" },
+	{ GPGME_STATUS_USERID_HINT, "userid-hint" },
+	{ GPGME_STATUS_UNEXPECTED, "unexpected" },
+	{ GPGME_STATUS_INV_RECP, "inv-recp" },
+	{ GPGME_STATUS_NO_RECP, "no-recp" },
+	{ GPGME_STATUS_ALREADY_SIGNED, "already-signed" },
+	{ GPGME_STATUS_SIGEXPIRED, "sigexpired" },
+	{ GPGME_STATUS_EXPSIG, "expsig" },
+	{ GPGME_STATUS_EXPKEYSIG, "expkeysig" },
+	{ GPGME_STATUS_TRUNCATED, "truncated" },
+	{ GPGME_STATUS_ERROR, "error" },
+	{ GPGME_STATUS_NEWSIG, "newsig" },
+	{ GPGME_STATUS_REVKEYSIG, "revkeysig" },
+	{ GPGME_STATUS_SIG_SUBPACKET, "sig-subpacket" },
+	{ GPGME_STATUS_NEED_PASSPHRASE_PIN, "need-passphrase-pin" },
+	{ GPGME_STATUS_SC_OP_FAILURE, "sc-op-failure" },
+	{ GPGME_STATUS_SC_OP_SUCCESS, "sc-op-success" },
+	{ GPGME_STATUS_CARDCTRL, "cardctrl" },
+	{ GPGME_STATUS_BACKUP_KEY_CREATED, "backup-key-created" },
+	{ GPGME_STATUS_PKA_TRUST_BAD, "pka-trust-bad" },
+	{ GPGME_STATUS_PKA_TRUST_GOOD, "pka-trust-good" },
+
+	{ GPGME_STATUS_PLAINTEXT, "plaintext" },
+	{ 0, NULL }
+};
+
 void
 _perl_gpgme_call_xs (pTHX_ void (*subaddr) (pTHX_ CV *), CV *cv, SV **mark) {
 	dSP;
