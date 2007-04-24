@@ -330,6 +330,41 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	OUTPUT:
 		RETVAL
 
+void
+gpgme_genkey (ctx, parms)
+		gpgme_ctx_t ctx
+		const char *parms
+	PREINIT:
+		gpgme_error_t err;
+		gpgme_data_t pubkey, seckey;
+		gpgme_genkey_result_t result;
+	INIT:
+		err = gpgme_data_new (&pubkey);
+		perl_gpgme_assert_error (err);
+
+		err = gpgme_data_new (&seckey);
+		perl_gpgme_assert_error (err);
+	PPCODE:
+		err = gpgme_op_genkey (ctx, parms, pubkey, seckey);
+		perl_gpgme_assert_error (err);
+
+		result = gpgme_op_genkey_result (ctx);
+
+		EXTEND (sp, 3);
+		PUSHs (perl_gpgme_genkey_result_to_sv (result));
+		PUSHs (perl_gpgme_data_to_sv (pubkey));
+		PUSHs (perl_gpgme_data_to_sv (seckey));
+
+NO_OUTPUT gpgme_error_t
+gpgme_delete (ctx, key, allow_secret=0)
+		gpgme_ctx_t ctx
+		gpgme_key_t key
+		int allow_secret
+	CODE:
+		RETVAL = gpgme_op_delete (ctx, key, allow_secret);
+	POSTCALL:
+		perl_gpgme_assert_error (RETVAL);
+
 gpgme_data_t
 gpgme_edit (ctx, key, func, user_data=NULL)
 		SV *ctx

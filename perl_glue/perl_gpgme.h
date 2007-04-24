@@ -212,3 +212,5 @@ SV *perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo);
 SV *perl_gpgme_hashref_from_trust_item (gpgme_trust_item_t item);
 
 SV *perl_gpgme_sv_from_status_code (gpgme_status_code_t status);
+
+SV *perl_gpgme_genkey_result_to_sv (gpgme_genkey_result_t result);

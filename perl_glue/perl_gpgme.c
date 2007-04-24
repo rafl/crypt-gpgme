@@ -757,3 +757,21 @@ perl_gpgme_sv_from_status_code (gpgme_status_code_t status) {
 
 	return ret;
 }
+
+SV *
+perl_gpgme_genkey_result_to_sv (gpgme_genkey_result_t result) {
+	SV *sv;
+	HV *hv;
+
+	hv = newHV ();
+
+	hv_store (hv, "primary", 7, newSViv (result->primary), 0);
+	hv_store (hv, "sub", 3, newSViv (result->sub), 0);
+
+	if (result->fpr) {
+		hv_store (hv, "fpr", 3, newSVpv (result->fpr, 0), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
