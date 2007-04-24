@@ -178,6 +178,9 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 					sv = newSVpv (tmp, 1);
 					break;
 				}
+				case PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS:
+					sv = perl_gpgme_sv_from_status_code (va_arg (va_args, gpgme_status_code_t));
+					break;
 				default:
 					PUTBACK;
 					croak ("unknown perl_gpgme_callback_param_type_t");
@@ -701,6 +704,55 @@ perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo) {
 			break;
 		default:
 			croak ("unknown hash algo");
+	}
+
+	return ret;
+}
+
+SV *
+perl_gpgme_hashref_from_trust_item (gpgme_trust_item_t item) {
+	SV *sv;
+	HV *hv;
+
+	hv = newHV ();
+
+	if (item->keyid) {
+		hv_store (hv, "keyid", 5, newSVpv (item->keyid, 0), 0);
+	}
+
+	hv_store (hv, "type", 4, newSVpv (item->type == 1 ? "key" : "uid", 0), 0);
+	hv_store (hv, "level", 5, newSViv (item->level), 0);
+
+	if (item->type == 1 && item->owner_trust) {
+		hv_store (hv, "owner_trust", 11, newSVpv (item->owner_trust, 0), 0);
+	}
+
+	if (item->validity) {
+		hv_store (hv, "validity", 8, newSVpv (item->validity, 0), 0);
+	}
+
+	if (item->type == 2 && item->name) {
+		hv_store (hv, "name", 4, newSVpv (item->name, 0), 0);
+	}
+
+	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
+
+SV *
+perl_gpgme_sv_from_status_code (gpgme_status_code_t status) {
+	perl_gpgme_status_code_map_t *i;
+	SV *ret = NULL;
+
+	for (i = perl_gpgme_status_code_map; i != NULL; i++) {
+		if (i->status == status) {
+			ret = newSVpv (i->string, 0);
+			break;
+		}
+	}
+
+	if (!ret) {
+		croak ("unknown status code");
 	}
 
 	return ret;

@@ -25,6 +25,22 @@ perl_gpgme_progress_cb (void *user_data, const char *what, int type, int current
 	perl_gpgme_callback_invoke (cb, NULL, what, type, current, total);
 }
 
+gpgme_error_t
+perl_gpgme_edit_cb (void *user_data, gpgme_status_code_t status, const char *args, int fd) {
+	char *buf;
+	perl_gpgme_callback_retval_t retvals[1];
+	perl_gpgme_callback_t *cb = (perl_gpgme_callback_t *)user_data;
+
+	perl_gpgme_callback_invoke (cb, retvals, status, args);
+
+	buf = (char *)retvals[0];
+
+	write (fd, buf, strlen (buf));
+	write (fd, "\n", 1);
+
+	return 0; /* FIXME */
+}
+
 MODULE = Crypt::GpgME	PACKAGE = Crypt::GpgME	PREFIX = gpgme_
 
 PROTOTYPES: ENABLE
@@ -314,6 +330,32 @@ gpgme_sign (ctx, plain, mode=GPGME_SIG_MODE_NORMAL)
 	OUTPUT:
 		RETVAL
 
+gpgme_data_t
+gpgme_edit (ctx, key, func, user_data)
+		SV *ctx
+		gpgme_key_t key
+		SV *func
+		SV *user_data
+	PREINIT:
+		perl_gpgme_callback_t *cb = NULL;
+		perl_gpgme_callback_param_type_t param_types[2];
+		perl_gpgme_callback_retval_type_t retval_types[1];
+		gpgme_ctx_t c_ctx;
+	INIT:
+		param_types[0] = PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS; /* status */
+		param_types[1] = PERL_GPGME_CALLBACK_PARAM_TYPE_STR; /* args */
+		retval_types[0] = PERL_GPGME_CALLBACK_RETVAL_TYPE_STR; /* result */
+	CODE:
+		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
+
+		cb = perl_gpgme_callback_new (func, user_data, ctx, 2, param_types, 1, retval_types);
+		
+		gpgme_op_edit (c_ctx, key, perl_gpgme_edit_cb, cb, RETVAL);
+
+		perl_gpgme_callback_destroy (cb);
+	OUTPUT:
+		RETVAL
+
 void
 gpgme_keylist (ctx, pattern, secret_only=0)
 		gpgme_ctx_t ctx
@@ -333,6 +375,29 @@ gpgme_keylist (ctx, pattern, secret_only=0)
 		if (gpg_err_code (err) != GPG_ERR_EOF) {
 			perl_gpgme_assert_error (err);
 		}
+
+void
+gpgme_trustlist (ctx, pattern, max_level)
+		gpgme_ctx_t ctx
+		const char *pattern
+		int max_level
+	PREINIT:
+		gpgme_error_t err;
+		gpgme_trust_item_t item;
+	PPCODE:
+		err = gpgme_op_trustlist_start (ctx, pattern, max_level);
+		perl_gpgme_assert_error (err);
+
+		while ((err = gpgme_op_trustlist_next (ctx, &item)) == GPG_ERR_NO_ERROR) {
+			XPUSHs (perl_gpgme_hashref_from_trust_item (item));
+			gpgme_trust_item_unref (item);
+		}
+
+		if (gpg_err_code (err) != GPG_ERR_EOF) {
+			perl_gpgme_assert_error (err);
+		}
+
+		gpgme_op_trustlist_end (ctx);
 
 NO_OUTPUT gpgme_error_t
 gpgme_engine_check_version (ctx, proto)
