@@ -4,10 +4,11 @@
 ^\.git
 ^MANIFEST\.bak$
 ^Makefile$
-^Makefile.old$
 \.bs$
 ^t/gpg/random_seed$
 ^Crypt-GpgME-
 ^blib\b
 \.swp$
 ~$
+\.$
+\.old$
