@@ -249,47 +249,45 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 
 	PUSHMARK (sp);
 
+	EXTEND (sp, cb->n_params + 1);
+
 	if (cb->obj) {
-		XPUSHs (cb->obj);
+		PUSHs (cb->obj);
 	}
 
 	va_start (va_args, retvals);
 
-	/* TODO: EXTEND first */
-	if (cb->n_params > 0) {
-		for (i = 0; i < cb->n_params; i++) {
-			SV *sv;
+	for (i = 0; i < cb->n_params; i++) {
+		SV *sv;
 
-			switch (cb->param_types[i]) {
-				case PERL_GPGME_CALLBACK_PARAM_TYPE_STR:
-					sv = newSVpv (va_arg (va_args, char *), 0);
-					break;
-				case PERL_GPGME_CALLBACK_PARAM_TYPE_INT:
-					sv = newSViv (va_arg (va_args, int));
-					break;
-				case PERL_GPGME_CALLBACK_PARAM_TYPE_CHAR: {
-					char tmp[0];
-					tmp[0] = va_arg (va_args, int);
+		switch (cb->param_types[i]) {
+			case PERL_GPGME_CALLBACK_PARAM_TYPE_STR:
+				sv = newSVpv (va_arg (va_args, char *), 0);
+				break;
+			case PERL_GPGME_CALLBACK_PARAM_TYPE_INT:
+				sv = newSViv (va_arg (va_args, int));
+				break;
+			case PERL_GPGME_CALLBACK_PARAM_TYPE_CHAR: {
+				char tmp[0];
+				tmp[0] = va_arg (va_args, int);
 
-					sv = newSVpv (tmp, 1);
-					break;
-				}
-				case PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS:
-					sv = perl_gpgme_sv_from_status_code (va_arg (va_args, gpgme_status_code_t));
-					break;
-				default:
-					PUTBACK;
-					croak ("unknown perl_gpgme_callback_param_type_t");
+				sv = newSVpv (tmp, 1);
+				break;
 			}
-
-			if (!sv) {
+			case PERL_GPGME_CALLBACK_PARAM_TYPE_STATUS:
+				sv = perl_gpgme_sv_from_status_code (va_arg (va_args, gpgme_status_code_t));
+				break;
+			default:
 				PUTBACK;
-				croak ("failed to convert value to sv");
-			}
-
-			XPUSHs (sv);
-			/* TODO: free sv? */
+				croak ("unknown perl_gpgme_callback_param_type_t");
 		}
+
+		if (!sv) {
+			PUTBACK;
+			croak ("failed to convert value to sv");
+		}
+
+		PUSHs (sv);
 	}
 
 	va_end (va_args);
