@@ -29,7 +29,7 @@ perl_gpgme_data_read (void *handle, void *buffer, size_t size) {
 
 	if (ret != 1) {
 		PUTBACK;
-		croak ("TODO");
+		croak ("Calling sysread on io handle didn't return a single scalar.");
 	}
 
 	got_size = POPi;
@@ -67,7 +67,7 @@ perl_gpgme_data_write (void *handle, const void *buffer, size_t size) {
 
 	if (ret != 1) {
 		PUTBACK;
-		croak ("TODO");
+		croak ("Calling syswrite on io handle didn't return a single scalar.");
 	}
 
 	got_size = POPi;
@@ -103,7 +103,7 @@ perl_gpgme_data_seek (void *handle, off_t offset, int whence) {
 
 	if (ret != 1) {
 		PUTBACK;
-		croak ("TODO");
+		croak ("Calling sysseek on io handle didn't return a single scalar.");
 	}
 
 	seeked = POPi;
@@ -169,7 +169,7 @@ perl_gpgme_data_io_handle_from_scalar (SV *scalar) {
 
 	if (ret != 1) {
 		PUTBACK;
-		croak ("TODO");
+		croak ("Failed to create Crypt::GpgME::Data instance.");
 	}
 
 	sv = POPs;
@@ -213,7 +213,7 @@ perl_gpgme_data_to_sv (gpgme_data_t data) {
 
 	if (ret != 1) {
 		PUTBACK;
-		croak ("TODO");
+		croak ("Failed to create Crypt::GpgME::Data instance.");
 	}
 
 	sv = POPs;
