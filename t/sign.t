@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Test::Exception;
 
 BEGIN {
@@ -24,6 +24,7 @@ lives_ok (sub {
         $signed = $ctx->sign($data, 'clear');
 }, 'clearsign');
 
+isa_ok ($signed, 'Crypt::GpgME::Data');
 isa_ok ($signed, 'IO::Handle');
 
 my $signed_text = do { local $/; <$signed> };
