@@ -87,6 +87,8 @@ void perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_
 
 SV *perl_gpgme_protocol_to_string (gpgme_protocol_t protocol);
 
+void perl_gpgme_hv_store (HV *hv, const char *key, I32 key_len, SV *val);
+
 SV *perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info);
 
 SV *perl_gpgme_hashref_from_subkey (gpgme_subkey_t subkey);

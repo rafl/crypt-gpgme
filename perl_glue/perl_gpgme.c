@@ -351,6 +351,21 @@ perl_gpgme_protocol_to_string (gpgme_protocol_t protocol) {
 	return ret;
 }
 
+void
+perl_gpgme_hv_store (HV *hv, const char *key, I32 key_len, SV *val) {
+	SV **ret;
+
+	if (key_len == 0) {
+		key_len = strlen (key);
+	}
+
+	ret = hv_store (hv, key, key_len, val, 0);
+
+	if (!ret) {
+		croak ("failed to store value inside hash");
+	}
+}
+
 SV *
 perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info) {
 	SV *sv;
@@ -358,24 +373,23 @@ perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info) {
 
 	hv = newHV ();
 
-	/* TODO: error checking */
 	if (info->file_name) {
-		hv_store (hv, "file_name", 9, newSVpv (info->file_name, 0), 0);
+		perl_gpgme_hv_store (hv, "file_name", 9, newSVpv (info->file_name, 0));
 	}
 
 	if (info->home_dir) {
-		hv_store (hv, "home_dir", 8, newSVpv (info->home_dir, 0), 0);
+		perl_gpgme_hv_store (hv, "home_dir", 8, newSVpv (info->home_dir, 0));
 	}
 
 	if (info->version) {
-		hv_store (hv, "version", 7, newSVpv (info->version, 0), 0);
+		perl_gpgme_hv_store (hv, "version", 7, newSVpv (info->version, 0));
 	}
 
 	if (info->req_version) {
-		hv_store (hv, "req_version", 11, newSVpv (info->req_version, 0), 0);
+		perl_gpgme_hv_store (hv, "req_version", 11, newSVpv (info->req_version, 0));
 	}
 
-	hv_store (hv, "protocol", 8, perl_gpgme_protocol_to_string (info->protocol), 0);
+	perl_gpgme_hv_store (hv, "protocol", 8, perl_gpgme_protocol_to_string (info->protocol));
 
 	sv = newRV_noinc ((SV *)hv);
 	return sv;
@@ -418,30 +432,29 @@ perl_gpgme_hashref_from_subkey (gpgme_subkey_t subkey) {
 
 	hv = newHV ();
 
-	/* TODO: error checking */
-	hv_store (hv, "revoked", 7, newSVuv (subkey->revoked), 0);
-	hv_store (hv, "expired", 7, newSVuv (subkey->expired), 0);
-	hv_store (hv, "disabled", 8, newSVuv (subkey->disabled), 0);
-	hv_store (hv, "invalid", 7, newSVuv (subkey->invalid), 0);
-	hv_store (hv, "can_encrypt", 11, newSVuv (subkey->can_encrypt), 0);
-	hv_store (hv, "can_sign", 8, newSVuv (subkey->can_sign), 0);
-	hv_store (hv, "can_certify", 11, newSVuv (subkey->can_certify), 0);
-	hv_store (hv, "secret", 6, newSVuv (subkey->secret), 0);
-	hv_store (hv, "can_authenticate", 16, newSVuv (subkey->can_authenticate), 0);
-	hv_store (hv, "is_qualified", 12, newSVuv (subkey->is_qualified), 0);
-	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (subkey->pubkey_algo), 0);
-	hv_store (hv, "length", 6, newSVuv (subkey->length), 0);
+	perl_gpgme_hv_store (hv, "revoked", 7, newSVuv (subkey->revoked));
+	perl_gpgme_hv_store (hv, "expired", 7, newSVuv (subkey->expired));
+	perl_gpgme_hv_store (hv, "disabled", 8, newSVuv (subkey->disabled));
+	perl_gpgme_hv_store (hv, "invalid", 7, newSVuv (subkey->invalid));
+	perl_gpgme_hv_store (hv, "can_encrypt", 11, newSVuv (subkey->can_encrypt));
+	perl_gpgme_hv_store (hv, "can_sign", 8, newSVuv (subkey->can_sign));
+	perl_gpgme_hv_store (hv, "can_certify", 11, newSVuv (subkey->can_certify));
+	perl_gpgme_hv_store (hv, "secret", 6, newSVuv (subkey->secret));
+	perl_gpgme_hv_store (hv, "can_authenticate", 16, newSVuv (subkey->can_authenticate));
+	perl_gpgme_hv_store (hv, "is_qualified", 12, newSVuv (subkey->is_qualified));
+	perl_gpgme_hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (subkey->pubkey_algo));
+	perl_gpgme_hv_store (hv, "length", 6, newSVuv (subkey->length));
 
 	if (subkey->keyid) {
-		hv_store (hv, "keyid", 5, newSVpv (subkey->keyid, 0), 0);
+		perl_gpgme_hv_store (hv, "keyid", 5, newSVpv (subkey->keyid, 0));
 	}
 
 	if (subkey->fpr) {
-		hv_store (hv, "fpr", 3, newSVpv (subkey->fpr, 0), 0);
+		perl_gpgme_hv_store (hv, "fpr", 3, newSVpv (subkey->fpr, 0));
 	}
 
-	hv_store (hv, "timestamp", 9, newSViv (subkey->timestamp), 0); /* FIXME: long int vs. int? */
-	hv_store (hv, "expires", 7, newSViv (subkey->expires), 0); /* ditto */
+	perl_gpgme_hv_store (hv, "timestamp", 9, newSViv (subkey->timestamp)); /* FIXME: long int vs. int? */
+	perl_gpgme_hv_store (hv, "expires", 7, newSViv (subkey->expires)); /* ditto */
 
 	sv = newRV_noinc ((SV *)hv);
 	return sv;
@@ -454,28 +467,28 @@ perl_gpgme_hashref_from_uid (gpgme_user_id_t uid) {
 
 	hv = newHV ();
 
-	hv_store (hv, "revoked", 7, newSVuv (uid->revoked), 0);
-	hv_store (hv, "invalid", 7, newSVuv (uid->invalid), 0);
-	hv_store (hv, "validity", 8, perl_gpgme_validity_to_string (uid->validity), 0);
+	perl_gpgme_hv_store (hv, "revoked", 7, newSVuv (uid->revoked));
+	perl_gpgme_hv_store (hv, "invalid", 7, newSVuv (uid->invalid));
+	perl_gpgme_hv_store (hv, "validity", 8, perl_gpgme_validity_to_string (uid->validity));
 
 	if (uid->uid) {
-		hv_store (hv, "uid", 3, newSVpv (uid->uid, 0), 0);
+		perl_gpgme_hv_store (hv, "uid", 3, newSVpv (uid->uid, 0));
 	}
 
 	if (uid->name) {
-		hv_store (hv, "name", 4, newSVpv (uid->name, 0), 0);
+		perl_gpgme_hv_store (hv, "name", 4, newSVpv (uid->name, 0));
 	}
 
 	if (uid->email) {
-		hv_store (hv, "email", 5, newSVpv (uid->email, 0), 0);
+		perl_gpgme_hv_store (hv, "email", 5, newSVpv (uid->email, 0));
 	}
 
 	if (uid->comment) {
-		hv_store (hv, "comment", 7, newSVpv (uid->comment, 0), 0);
+		perl_gpgme_hv_store (hv, "comment", 7, newSVpv (uid->comment, 0));
 	}
 
 	if (uid->signatures) {
-		hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_signatures (uid->signatures), 0);
+		perl_gpgme_hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_signatures (uid->signatures));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
@@ -505,45 +518,44 @@ perl_gpgme_hashref_from_signature (gpgme_key_sig_t sig) {
 
 	hv = newHV ();
 
-	/* TODO: error checking */
-	hv_store (hv, "revoked", 7, newSVuv (sig->revoked), 0);
-	hv_store (hv, "expired", 7, newSVuv (sig->expired), 0);
-	hv_store (hv, "invalid", 7, newSVuv (sig->invalid), 0);
-	hv_store (hv, "exportable", 10, newSVuv (sig->exportable), 0);
-	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo), 0);
+	perl_gpgme_hv_store (hv, "revoked", 7, newSVuv (sig->revoked));
+	perl_gpgme_hv_store (hv, "expired", 7, newSVuv (sig->expired));
+	perl_gpgme_hv_store (hv, "invalid", 7, newSVuv (sig->invalid));
+	perl_gpgme_hv_store (hv, "exportable", 10, newSVuv (sig->exportable));
+	perl_gpgme_hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo));
 
 	if (sig->keyid) {
-		hv_store (hv, "keyid", 5, newSVpv (sig->keyid, 0), 0);
+		perl_gpgme_hv_store (hv, "keyid", 5, newSVpv (sig->keyid, 0));
 	}
 
-	hv_store (hv, "timestamp", 9, newSViv (sig->timestamp), 0); /* FIXME: long int vs. IV? */
-	hv_store (hv, "expires", 7, newSViv (sig->expires), 0); /* ditto */
+	perl_gpgme_hv_store (hv, "timestamp", 9, newSViv (sig->timestamp)); /* FIXME: long int vs. IV? */
+	perl_gpgme_hv_store (hv, "expires", 7, newSViv (sig->expires)); /* ditto */
 
 	if (sig->status != GPG_ERR_NO_ERROR) {
-		hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+		perl_gpgme_hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)));
 	}
 
 	if (sig->uid) {
-		hv_store (hv, "uid", 3, newSVpv (sig->uid, 0), 0);
+		perl_gpgme_hv_store (hv, "uid", 3, newSVpv (sig->uid, 0));
 	}
 
 	if (sig->name) {
-		hv_store (hv, "name", 4, newSVpv (sig->name, 0), 0);
+		perl_gpgme_hv_store (hv, "name", 4, newSVpv (sig->name, 0));
 	}
 
 	if (sig->email) {
-		hv_store (hv, "email", 5, newSVpv (sig->email, 0), 0);
+		perl_gpgme_hv_store (hv, "email", 5, newSVpv (sig->email, 0));
 	}
 
 	if (sig->comment) {
-		hv_store (hv, "comment", 7, newSVpv (sig->comment, 0), 0);
+		perl_gpgme_hv_store (hv, "comment", 7, newSVpv (sig->comment, 0));
 	}
 
 	/* FIXME: really export this? */
-	hv_store (hv, "sig_class", 9, newSVuv (sig->sig_class), 0);
+	perl_gpgme_hv_store (hv, "sig_class", 9, newSVuv (sig->sig_class));
 
 	if (sig->notations) {
-		hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations), 0);
+		perl_gpgme_hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
@@ -574,17 +586,17 @@ perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation) {
 	hv = newHV ();
 
 	if (notation->name) {
-		hv_store (hv, "name", 4, newSVpv (notation->name, notation->name_len), 0);
+		perl_gpgme_hv_store (hv, "name", 4, newSVpv (notation->name, notation->name_len));
 	}
 
 	if (notation->value) {
-		hv_store (hv, "value", 5, newSVpv (notation->value, notation->value_len), 0);
+		perl_gpgme_hv_store (hv, "value", 5, newSVpv (notation->value, notation->value_len));
 	}
 
 	/* TODO: store flags as array ref of strings - see input typemap */
 
-	hv_store (hv, "human_readable", 14, newSVuv (notation->human_readable), 0);
-	hv_store (hv, "critical", 8, newSVuv (notation->critical), 0);
+	perl_gpgme_hv_store (hv, "human_readable", 14, newSVuv (notation->human_readable));
+	perl_gpgme_hv_store (hv, "critical", 8, newSVuv (notation->critical));
 
 	sv = newRV_noinc ((SV *)hv);
 	return sv;
@@ -628,11 +640,11 @@ perl_gpgme_hashref_from_verify_result (gpgme_verify_result_t result) {
 	hv = newHV ();
 
 	if (result->file_name) {
-		hv_store (hv, "file_name", 9, newSVpv (result->file_name, 0), 0);
+		perl_gpgme_hv_store (hv, "file_name", 9, newSVpv (result->file_name, 0));
 	}
 
 	if (result->signatures) {
-		hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_verify_signatures (result->signatures), 0);
+		perl_gpgme_hv_store (hv, "signatures", 10, perl_gpgme_array_ref_from_verify_signatures (result->signatures));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
@@ -662,34 +674,34 @@ perl_gpgme_hashref_from_verify_signature (gpgme_signature_t sig) {
 
 	hv = newHV ();
 
-	hv_store (hv, "summary", 7, perl_gpgme_sigsum_to_string (sig->summary), 0);
+	perl_gpgme_hv_store (hv, "summary", 7, perl_gpgme_sigsum_to_string (sig->summary));
 
 	if (sig->fpr) {
-		hv_store (hv, "fpr", 3, newSVpv (sig->fpr, 0), 0);
+		perl_gpgme_hv_store (hv, "fpr", 3, newSVpv (sig->fpr, 0));
 	}
 
 	if (sig->status != GPG_ERR_NO_ERROR) {
-		hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+		perl_gpgme_hv_store (hv, "status", 6, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)));
 	}
 
-	hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations), 0);
+	perl_gpgme_hv_store (hv, "notations", 9, perl_gpgme_array_ref_from_notations (sig->notations));
 
-	hv_store (hv, "timestamp", 9, newSVuv (sig->timestamp), 0); /* FIXME: long uint vs. UV */
-	hv_store (hv, "exp_timestamp", 13, newSVuv (sig->exp_timestamp), 0); /* ditto */
-	hv_store (hv, "wrong_key_usage", 15, newSVuv (sig->wrong_key_usage), 0);
-	hv_store (hv, "pka_trust", 9, newSVuv (sig->pka_trust), 0);
+	perl_gpgme_hv_store (hv, "timestamp", 9, newSVuv (sig->timestamp)); /* FIXME: long uint vs. UV */
+	perl_gpgme_hv_store (hv, "exp_timestamp", 13, newSVuv (sig->exp_timestamp)); /* ditto */
+	perl_gpgme_hv_store (hv, "wrong_key_usage", 15, newSVuv (sig->wrong_key_usage));
+	perl_gpgme_hv_store (hv, "pka_trust", 9, newSVuv (sig->pka_trust));
 
-	hv_store (hv, "validity", 8, perl_gpgme_validity_to_string (sig->validity), 0);
+	perl_gpgme_hv_store (hv, "validity", 8, perl_gpgme_validity_to_string (sig->validity));
 
 	if (sig->validity_reason != GPG_ERR_NO_ERROR) {
-		hv_store (hv, "validity_reason", 15, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)), 0);
+		perl_gpgme_hv_store (hv, "validity_reason", 15, newSVpvf ("%s: %s", gpgme_strsource (sig->status), gpgme_strerror (sig->status)));
 	}
 
-	hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo), 0);
-	hv_store (hv, "hash_algo", 9, perl_gpgme_hash_algo_to_string (sig->hash_algo), 0);
+	perl_gpgme_hv_store (hv, "pubkey_algo", 11, perl_gpgme_pubkey_algo_to_string (sig->pubkey_algo));
+	perl_gpgme_hv_store (hv, "hash_algo", 9, perl_gpgme_hash_algo_to_string (sig->hash_algo));
 
 	if (sig->pka_address) {
-		hv_store (hv, "pka_address", 11, newSVpv (sig->pka_address, 0), 0);
+		perl_gpgme_hv_store (hv, "pka_address", 11, newSVpv (sig->pka_address, 0));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
@@ -811,22 +823,22 @@ perl_gpgme_hashref_from_trust_item (gpgme_trust_item_t item) {
 	hv = newHV ();
 
 	if (item->keyid) {
-		hv_store (hv, "keyid", 5, newSVpv (item->keyid, 0), 0);
+		perl_gpgme_hv_store (hv, "keyid", 5, newSVpv (item->keyid, 0));
 	}
 
-	hv_store (hv, "type", 4, newSVpv (item->type == 1 ? "key" : "uid", 0), 0);
-	hv_store (hv, "level", 5, newSViv (item->level), 0);
+	perl_gpgme_hv_store (hv, "type", 4, newSVpv (item->type == 1 ? "key" : "uid", 0));
+	perl_gpgme_hv_store (hv, "level", 5, newSViv (item->level));
 
 	if (item->type == 1 && item->owner_trust) {
-		hv_store (hv, "owner_trust", 11, newSVpv (item->owner_trust, 0), 0);
+		perl_gpgme_hv_store (hv, "owner_trust", 11, newSVpv (item->owner_trust, 0));
 	}
 
 	if (item->validity) {
-		hv_store (hv, "validity", 8, newSVpv (item->validity, 0), 0);
+		perl_gpgme_hv_store (hv, "validity", 8, newSVpv (item->validity, 0));
 	}
 
 	if (item->type == 2 && item->name) {
-		hv_store (hv, "name", 4, newSVpv (item->name, 0), 0);
+		perl_gpgme_hv_store (hv, "name", 4, newSVpv (item->name, 0));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
@@ -859,11 +871,11 @@ perl_gpgme_genkey_result_to_sv (gpgme_genkey_result_t result) {
 
 	hv = newHV ();
 
-	hv_store (hv, "primary", 7, newSViv (result->primary), 0);
-	hv_store (hv, "sub", 3, newSViv (result->sub), 0);
+	perl_gpgme_hv_store (hv, "primary", 7, newSViv (result->primary));
+	perl_gpgme_hv_store (hv, "sub", 3, newSViv (result->sub));
 
 	if (result->fpr) {
-		hv_store (hv, "fpr", 3, newSVpv (result->fpr, 0), 0);
+		perl_gpgme_hv_store (hv, "fpr", 3, newSVpv (result->fpr, 0));
 	}
 
 	sv = newRV_noinc ((SV *)hv);
