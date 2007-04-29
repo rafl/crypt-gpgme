@@ -1,5 +1,11 @@
 Revision history for Crypt-GpgME
 
+0.02    Sun, 29 Apr 2007 15:58:12 +0200
+        * Don't use IPC::Run to execute gpgme-config.
+        * Better error checking for converting c structures to perl hashes.
+        * Some performance optimisations.
+        * Make signature notation flags available from perl.
+
 0.01    Wed, 18 Apr 2007 01:24:41 +0200
-        First version, released on an unsuspecting world.
+        * First version, released on an unsuspecting world.
 
