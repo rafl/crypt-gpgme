@@ -734,8 +734,6 @@ perl_gpgme_sigsum_to_string (gpgme_sigsum_t summary) {
 
 	av = newAV ();
 
-	/* FIXME: is this really a flag */
-
 	if (summary & GPGME_SIGSUM_VALID) {
 		av_push (av, newSVpv ("valid", 0));
 	}
