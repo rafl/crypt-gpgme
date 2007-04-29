@@ -2,7 +2,6 @@ package Module::Install::PRIVATE::Crypt::GpgME;
 
 use strict;
 use warnings;
-use IPC::Run qw/run/;
 use File::Which qw/which/;
 use Module::Install::Base;
 
@@ -64,7 +63,7 @@ sub get_config {
 sub run_gpgme_config {
     my ($self, $exe, $key) = @_;
 
-    run [$exe, "--$key"], \undef, \my $out or die "Failed to run `$exe': $!\n";
+    my $out = `$exe --$key`;
     chomp $out;
 
     return $out;
