@@ -593,12 +593,31 @@ perl_gpgme_hashref_from_notation (gpgme_sig_notation_t notation) {
 		perl_gpgme_hv_store (hv, "value", 5, newSVpv (notation->value, notation->value_len));
 	}
 
-	/* TODO: store flags as array ref of strings - see input typemap */
+	perl_gpgme_hv_store (hv, "flags", 5, perl_gpgme_avref_from_notation_flags (notation->flags));
 
 	perl_gpgme_hv_store (hv, "human_readable", 14, newSVuv (notation->human_readable));
 	perl_gpgme_hv_store (hv, "critical", 8, newSVuv (notation->critical));
 
 	sv = newRV_noinc ((SV *)hv);
+	return sv;
+}
+
+SV *
+perl_gpgme_avref_from_notation_flags (gpgme_sig_notation_flags_t flags) {
+	SV *sv;
+	AV *av;
+
+	av = newAV ();
+
+	if (flags & GPGME_SIG_NOTATION_HUMAN_READABLE) {
+		av_push (av, newSVpv ("human-readable", 0));
+	}
+
+	if (flags & GPGME_SIG_NOTATION_CRITICAL) {
+		av_push (av, newSVpv ("critical", 0));
+	}
+
+	sv = newRV_inc ((SV *)av);
 	return sv;
 }
 
