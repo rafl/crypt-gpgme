@@ -193,7 +193,14 @@ perl_gpgme_data_to_sv (gpgme_data_t data) {
 	gpgme_data_seek (data, 0, SEEK_SET);
 
 	buf = gpgme_data_release_and_get_mem (data, &len);
-	buffer = newSVpv (buf, len);
+
+	if (!buf) {
+		buffer = newSV (0);
+	}
+	else {
+		buffer = newSVpv (buf, len);
+	}
+
 	gpgme_free (buf);
 
 	ENTER;
