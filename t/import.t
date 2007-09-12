@@ -2,9 +2,13 @@
 
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More;
 use Test::Exception;
-use Test::MockModule;
+
+eval 'use Test::MockModule';
+plan skip_all => 'Test::MockModule required' if $@;
+
+plan tests => 15;
 
 require Crypt::GpgME;
 

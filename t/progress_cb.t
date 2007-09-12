@@ -2,10 +2,16 @@
 
 use strict;
 use warnings;
-use Test::More tests => 24;
+use Test::More;
 use Test::Exception;
 use IO::Scalar;
-use Scalar::Util qw/looks_like_number/;
+
+BEGIN {
+    eval 'use Scalar::Util qw/looks_like_number/';
+    plan skip_all => 'Scalar::Util required' if $@;
+
+    plan tests => 24;
+}
 
 BEGIN {
 	use_ok( 'Crypt::GpgME' );

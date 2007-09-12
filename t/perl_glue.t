@@ -2,11 +2,19 @@
 
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use Test::Exception;
-use Test::MockModule;
 
-BEGIN { use_ok('Crypt::GpgME') }
+BEGIN {
+    eval 'use Test::MockModule;';
+    plan skip_all => 'Test::MockModule required' if $@;
+
+    plan tests => 2;
+}
+
+BEGIN {
+    use_ok('Crypt::GpgME');
+}
 
 my $mock = Test::MockModule->new('Crypt::GpgME');
 $mock->mock(DESTROY => sub ($) { });
