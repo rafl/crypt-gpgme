@@ -1,5 +1,15 @@
 Revision history for Crypt-GpgME
 
+0.03    Thu, 10 May 2007 15:33:05 +0200
+        * Fix a coredump when gpgme_data_release_and_get_mem returned NULL.
+        * Use gpgme functions to convert algos/protos to strings.
+          This is an incompatible change as the proto/algo names were
+          previously returned in lower case (i.e. 'OpenPGP' was called 'openpgp'
+          in version 0.02 and below).
+        * Build depend on File::Which.
+        * Make Test::MockModule optional for the tests.
+        * Don't auto_include things anymore.
+
 0.02    Sun, 29 Apr 2007 15:58:12 +0200
         * Don't use IPC::Run to execute gpgme-config.
         * Better error checking for converting c structures to perl hashes.
