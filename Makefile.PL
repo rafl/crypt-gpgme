@@ -20,6 +20,5 @@ gpgme;
 
 no_index directory => 'ext';
 
-auto_include;
 auto_install;
 WriteAll;
