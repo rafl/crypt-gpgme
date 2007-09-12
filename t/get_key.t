@@ -8,7 +8,9 @@ use Test::Exception;
 delete $ENV{GPG_AGENT_INFO};
 $ENV{GNUPGHOME} = 't/gpg';
 
-BEGIN { use_ok ('Crypt::GpgME') }
+BEGIN {
+    use_ok ('Crypt::GpgME');
+}
 
 my $fpr = '758E67AA4F0A13F7897AE49A1D57D5E006E16945';
 
