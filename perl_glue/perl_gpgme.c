@@ -335,20 +335,7 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 
 SV *
 perl_gpgme_protocol_to_string (gpgme_protocol_t protocol) {
-	SV *ret;
-
-	switch (protocol) {
-		case GPGME_PROTOCOL_OpenPGP:
-			ret = newSVpvn ("openpgp", 7);
-			break;
-		case GPGME_PROTOCOL_CMS:
-			ret = newSVpvn ("cms", 3);
-			break;
-		default:
-			croak ("unknown protocol");
-	}
-
-	return ret;
+	return newSVpv (gpgme_get_protocol_name (protocol), 0);
 }
 
 void
@@ -397,32 +384,7 @@ perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info) {
 
 SV *
 perl_gpgme_pubkey_algo_to_string (gpgme_pubkey_algo_t algo) {
-	SV *ret;
-
-	switch (algo) {
-		case GPGME_PK_RSA:
-			ret = newSVpvn ("rsa", 3);
-			break;
-		case GPGME_PK_RSA_E:
-			ret = newSVpvn ("rsa-e", 5);
-			break;
-		case GPGME_PK_RSA_S:
-			ret = newSVpvn ("rsa-s", 5);
-			break;
-		case GPGME_PK_ELG_E:
-			ret = newSVpvn ("elg-e", 5);
-			break;
-		case GPGME_PK_DSA:
-			ret = newSVpvn ("dsa", 3);
-			break;
-		case GPGME_PK_ELG:
-			ret = newSVpvn ("elg", 3);
-			break;
-		default:
-			croak ("unknown pubkey algo");
-	}
-
-	return ret;
+	return newSVpv (gpgme_pubkey_algo_name (algo), 0);
 }
 
 SV *
@@ -780,56 +742,7 @@ perl_gpgme_sigsum_to_string (gpgme_sigsum_t summary) {
 
 SV *
 perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo) {
-	SV *ret;
-
-	switch (algo) {
-		case GPGME_MD_NONE:
-			ret = newSVpv ("none", 0);
-			break;
-		case GPGME_MD_MD5:
-			ret = newSVpv ("md5", 0);
-			break;
-		case GPGME_MD_SHA1:
-			ret = newSVpv ("sha1", 0);
-			break;
-		case GPGME_MD_RMD160:
-			ret = newSVpv ("rmd160", 0);
-			break;
-		case GPGME_MD_MD2:
-			ret = newSVpv ("md2", 0);
-			break;
-		case GPGME_MD_TIGER:
-			ret = newSVpv ("tiger", 0);
-			break;
-		case GPGME_MD_HAVAL:
-			ret = newSVpv ("haval", 0);
-			break;
-		case GPGME_MD_SHA256:
-			ret = newSVpv ("sha256", 0);
-			break;
-		case GPGME_MD_SHA384:
-			ret = newSVpv ("sha384", 0);
-			break;
-		case GPGME_MD_SHA512:
-			ret = newSVpv ("sha512", 0);
-			break;
-		case GPGME_MD_MD4:
-			ret = newSVpv ("md4", 0);
-			break;
-		case GPGME_MD_CRC32:
-			ret = newSVpv ("crc32", 0);
-			break;
-		case GPGME_MD_CRC32_RFC1510:
-			ret = newSVpv ("crc32-rfc1510", 0);
-			break;
-		case GPGME_MD_CRC24_RFC2440:
-			ret = newSVpv ("crc24-rfc2440", 0);
-			break;
-		default:
-			croak ("unknown hash algo");
-	}
-
-	return ret;
+	return newSVpv (gpgme_hash_algo_name (algo), 0);
 }
 
 SV *
