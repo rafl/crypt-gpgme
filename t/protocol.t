@@ -23,12 +23,12 @@ isa_ok ($ctx, 'Crypt::GpgME');
             $proto = $ctx->get_protocol;
     }, 'getting protocol');
 
-    is ($proto, 'openpgp', 'default protocol is openpgp');
+    is ($proto, 'OpenPGP', 'default protocol is OpenPGP');
 }
 
 lives_ok (sub {
-        $ctx->set_protocol('cms');
-}, 'setting protocol to cms');
+        $ctx->set_protocol('CMS');
+}, 'setting protocol to CMS');
 
 {
     my $proto;
@@ -37,12 +37,12 @@ lives_ok (sub {
             $proto = $ctx->get_protocol;
     }, 'getting protocol');
 
-    is ($proto, 'cms', 'setting protocol worked');
+    is ($proto, 'CMS', 'setting protocol worked');
 }
 
 lives_ok (sub {
-        $ctx->set_protocol('openpgp');
-}, 'setting protocol to openpgp');
+        $ctx->set_protocol('OpenPGP');
+}, 'setting protocol to OpenPGP');
 
 {
     my $proto;
@@ -51,7 +51,7 @@ lives_ok (sub {
             $proto = $ctx->get_protocol;
     }, 'getting protocol');
 
-    is ($proto, 'openpgp', 'setting protocol worked');
+    is ($proto, 'OpenPGP', 'setting protocol worked');
 }
 
 throws_ok(sub {
@@ -69,5 +69,5 @@ lives_ok (sub {
             $proto = $ctx->get_protocol;
     }, 'getting protocol');
 
-    is ($proto, 'openpgp', 'calling set_protocol without arguments sets to openpgp');
+    is ($proto, 'OpenPGP', 'calling set_protocol without arguments sets to OpenPGP');
 }
