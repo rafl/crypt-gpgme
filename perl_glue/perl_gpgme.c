@@ -335,7 +335,13 @@ perl_gpgme_callback_invoke (perl_gpgme_callback_t *cb, perl_gpgme_callback_retva
 
 SV *
 perl_gpgme_protocol_to_string (gpgme_protocol_t protocol) {
-	return newSVpv (gpgme_get_protocol_name (protocol), 0);
+	const char *name = gpgme_get_protocol_name (protocol);
+
+	if (!name) {
+		return &PL_sv_undef;
+	}
+
+	return newSVpv (name, 0);
 }
 
 void
@@ -384,7 +390,13 @@ perl_gpgme_hashref_from_engine_info (gpgme_engine_info_t info) {
 
 SV *
 perl_gpgme_pubkey_algo_to_string (gpgme_pubkey_algo_t algo) {
-	return newSVpv (gpgme_pubkey_algo_name (algo), 0);
+	const char *name = gpgme_pubkey_algo_name (algo);
+
+	if (!name) {
+		return &PL_sv_undef;
+	}
+
+	return newSVpv (name, 0);
 }
 
 SV *
@@ -607,7 +619,7 @@ perl_gpgme_validity_to_string (gpgme_validity_t validity) {
 			ret = newSVpvn ("ultimate", 8);
 			break;
 		default:
-			croak ("unknown validity");
+			ret = &PL_sv_undef;
 	}
 
 	return ret;
@@ -742,7 +754,13 @@ perl_gpgme_sigsum_to_string (gpgme_sigsum_t summary) {
 
 SV *
 perl_gpgme_hash_algo_to_string (gpgme_hash_algo_t algo) {
-	return newSVpv (gpgme_hash_algo_name (algo), 0);
+	const char *name = gpgme_hash_algo_name (algo);
+
+	if (!name) {
+		return &PL_sv_undef;
+	}
+
+	return newSVpv (name, 0);
 }
 
 SV *
