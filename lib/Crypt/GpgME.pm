@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use IO::Scalar;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA;
 
 eval {
@@ -62,7 +62,7 @@ Crypt::GpgME - Perl interface to libgpgme
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 SYNOPSIS
 

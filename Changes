@@ -1,5 +1,9 @@
 Revision history for Crypt-GpgME
 
+0.04    Thu, 13 Sep 2007 15:02:34 +0200
+        * Don't croak when attemting to convert illegal enum values to strings.
+        * Don't pass NULL to newSVpv{,n}.
+
 0.03    Thu, 10 May 2007 15:33:05 +0200
         * Fix a coredump when gpgme_data_release_and_get_mem returned NULL.
         * Use gpgme functions to convert algos/protos to strings.
