@@ -348,11 +348,18 @@ gpgme_genkey (ctx, parms)
 		gpgme_data_t pubkey, seckey;
 		gpgme_genkey_result_t result;
 	INIT:
-		err = gpgme_data_new (&pubkey);
-		perl_gpgme_assert_error (err);
+		switch (gpgme_get_protocol (ctx)) {
+			case GPGME_PROTOCOL_OpenPGP:
+				pubkey = NULL;
+				seckey = NULL;
+				break;
+			default:
+				err = gpgme_data_new (&pubkey);
+				perl_gpgme_assert_error (err);
 
-		err = gpgme_data_new (&seckey);
-		perl_gpgme_assert_error (err);
+				err = gpgme_data_new (&seckey);
+				perl_gpgme_assert_error (err);
+		}
 	PPCODE:
 		err = gpgme_op_genkey (ctx, parms, pubkey, seckey);
 		perl_gpgme_assert_error (err);
