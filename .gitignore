@@ -10,6 +10,7 @@ xs/*.o
 perl_glue/*.o
 cover_db
 t/gpg/random_seed
+t/var
 *~
 MANIFEST
 MANIFEST.bak
