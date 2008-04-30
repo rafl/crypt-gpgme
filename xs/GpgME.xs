@@ -400,7 +400,7 @@ gpgme_edit (ctx, key, func, user_data=NULL)
 		c_ctx = (gpgme_ctx_t)perl_gpgme_get_ptr_from_sv (ctx, "Crypt::GpgME");
 
 		cb = perl_gpgme_callback_new (func, user_data, ctx, 2, param_types, 1, retval_types);
-		
+
 		gpgme_op_edit (c_ctx, key, perl_gpgme_edit_cb, cb, RETVAL);
 
 		perl_gpgme_callback_destroy (cb);

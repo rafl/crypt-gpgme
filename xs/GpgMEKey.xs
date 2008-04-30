@@ -151,7 +151,7 @@ uids (key)
 		for (i = key->uids; i != NULL; i = i->next) {
 			XPUSHs (sv_2mortal (perl_gpgme_hashref_from_uid (i)));
 		}
-		
+
 gpgme_keylist_mode_t
 keylist_mode (key)
 		gpgme_key_t key
