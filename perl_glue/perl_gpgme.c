@@ -1,6 +1,6 @@
 #include "perl_gpgme.h"
 
-static perl_gpgme_status_code_map_t perl_gpgme_status_code_map[] = {
+static const perl_gpgme_status_code_map_t perl_gpgme_status_code_map[] = {
 	{ GPGME_STATUS_EOF, "eof" },
 
 	{ GPGME_STATUS_ENTER, "enter" },
