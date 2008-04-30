@@ -13,7 +13,7 @@ perl_gpgme_passphrase_cb (void *user_data, const char *uid_hint, const char *pas
 	write (fd, buf, strlen (buf));
 	write (fd, "\n", 1);
 
-	free (buf);
+	Safefree (buf);
 
 	return 0; /* FIXME */
 }
