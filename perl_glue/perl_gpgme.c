@@ -92,8 +92,7 @@ static const perl_gpgme_status_code_map_t perl_gpgme_status_code_map[] = {
 	{ GPGME_STATUS_PKA_TRUST_BAD, "pka-trust-bad" },
 	{ GPGME_STATUS_PKA_TRUST_GOOD, "pka-trust-good" },
 
-	{ GPGME_STATUS_PLAINTEXT, "plaintext" },
-	{ 0, NULL }
+	{ GPGME_STATUS_PLAINTEXT, "plaintext" }
 };
 
 void
@@ -795,12 +794,14 @@ perl_gpgme_hashref_from_trust_item (gpgme_trust_item_t item) {
 
 SV *
 perl_gpgme_sv_from_status_code (gpgme_status_code_t status) {
-	perl_gpgme_status_code_map_t *i;
+	int i;
 	SV *ret = NULL;
 
-	for (i = perl_gpgme_status_code_map; i != NULL; i++) {
-		if (i->status == status) {
-			ret = newSVpv (i->string, 0);
+	for (i = 0; i < sizeof (perl_gpgme_status_code_map) / sizeof (perl_gpgme_status_code_map[0]); i++) {
+		perl_gpgme_status_code_map_t map = perl_gpgme_status_code_map[i];
+
+		if (map.status == status) {
+			ret = newSVpv (map.string, 0);
 			break;
 		}
 	}
