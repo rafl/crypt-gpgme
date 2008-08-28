@@ -18,6 +18,7 @@ sub gpgme {
     my $config_exe = $self->find_config_exe;
 
     my %gpgme_config = $self->get_config($config_exe);
+    printf "Found GpgME %s (api version %s)\n", @gpgme_config{qw/version api-version/};
 
     $self->check_version($gpgme_config{ version });
     $self->check_api_version($gpgme_config{ 'api-version' });
