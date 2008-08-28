@@ -9,10 +9,9 @@ name 'Crypt-GpgME';
 all_from 'lib/Crypt/GpgME.pm';
 
 requires 'IO::Scalar';
-
-build_requires 'File::Which';
-build_requires 'Test::Exception';
-build_requires 'Test::More';
+requires_external_bin 'gpgme-config';
+test_requires 'Test::Exception';
+test_requires 'Test::More';
 
 gpgme;
 

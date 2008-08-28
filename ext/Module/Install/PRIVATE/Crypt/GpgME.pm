@@ -2,7 +2,6 @@ package Module::Install::PRIVATE::Crypt::GpgME;
 
 use strict;
 use warnings;
-use File::Which qw/which/;
 use Module::Install::Base;
 
 use vars qw{$VERSION @ISA};
@@ -17,14 +16,6 @@ sub gpgme {
     $self->requires_external_cc;
 
     my $config_exe = $self->find_config_exe;
-    if (! -x $config_exe) {
-        die <<EOM;
-*** Could not find gpgme-config
-    If it's already installed, please set the GPGME_CONFIG environment
-    variable accordingly. If it isn't installed yet, get the latest version
-    from ftp://ftp.gnupg.org/GnuPG/gpgme.
-EOM
-    }
 
     my %gpgme_config = $self->get_config($config_exe);
 
@@ -47,7 +38,7 @@ sub find_config_exe {
         return $ENV{GPGME_CONFIG};
     }
 
-    return which('gpgme-config');
+    return 'gpgme-config';
 }
 
 sub get_config {
