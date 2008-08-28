@@ -6,6 +6,7 @@ use lib 'ext';
 use inc::Module::Install;
 
 name 'Crypt-GpgME';
+perl_version '5.008';
 all_from 'lib/Crypt/GpgME.pm';
 
 requires 'IO::Scalar';
