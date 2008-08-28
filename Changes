@@ -1,5 +1,9 @@
 Revision history for Crypt-GpgME
 
+0.05    Thu, 28 Aug 2008 07:54:18 +0200
+        * Add a testcase for openpgp key generation.
+        * Make key generation work with all engines.
+
 0.04    Thu, 13 Sep 2007 15:02:34 +0200
         * Don't croak when attemting to convert illegal enum values to strings.
         * Don't pass NULL to newSVpv{,n}.
