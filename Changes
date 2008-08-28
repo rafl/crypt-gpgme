@@ -1,5 +1,8 @@
 Revision history for Crypt-GpgME
 
+0.07    Fri, 29 Aug 2008 00:34:39 +0200
+        * Require perl 5.8.
+
 0.06    Thu, 28 Aug 2008 21:44:26 +0200
         * Add diagnostics to Makefile.PL in order to fix FAIL reports from
           cpantesters.
