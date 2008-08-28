@@ -1,5 +1,9 @@
 Revision history for Crypt-GpgME
 
+0.06    Thu, 28 Aug 2008 21:44:26 +0200
+        * Add diagnostics to Makefile.PL in order to fix FAIL reports from
+          cpantesters.
+
 0.05    Thu, 28 Aug 2008 07:54:18 +0200
         * Add a testcase for openpgp key generation.
         * Make key generation work with all engines.
