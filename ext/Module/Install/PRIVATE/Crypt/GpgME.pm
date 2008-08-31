@@ -24,9 +24,7 @@ sub gpgme {
 
     $self->makemaker_args(INC     => '-Iperl_glue'          );
     $self->makemaker_args(LIBS    => $gpgme_config{ libs   });
-    $self->makemaker_args(CCFLAGS => $gpgme_config{ cflags });
-
-    $self->makemaker_args(OPTIMIZE => '-Wall');
+    $self->makemaker_args(CCFLAGS => $gpgme_config{ cflags } . ' -Wall' );
 
     $self->xs_files;
 }
