@@ -24,7 +24,8 @@ sub gpgme {
 
     $self->makemaker_args(INC     => '-Iperl_glue'          );
     $self->makemaker_args(LIBS    => $gpgme_config{ libs   });
-    $self->makemaker_args(CCFLAGS => $gpgme_config{ cflags } . ' -Wall' );
+    $self->makemaker_args(CCFLAGS => $gpgme_config{ cflags }
+        . sprintf(' -Wall -DGPGME_API_VERSION="%s"', $gpgme_config{'api-version'}) );
 
     $self->xs_files;
 }
