@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use IO::Scalar;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 our @ISA;
 
 eval {
