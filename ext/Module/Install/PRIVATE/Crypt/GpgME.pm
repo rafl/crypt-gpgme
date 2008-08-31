@@ -64,11 +64,7 @@ sub check_api_version {
     my ($self, $version) = @_;
 
     if (!defined $version) {
-        warn <<EOM;
-*** Could not find gpgme version.
-    Things might go awry.
-EOM
-        return;
+        die "*** Could not find gpgme api version.\n"
     }
 
     if ($version ne '1') {
