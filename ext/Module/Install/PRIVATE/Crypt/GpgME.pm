@@ -26,7 +26,7 @@ sub gpgme {
     $self->makemaker_args(LIBS    => $gpgme_config{ libs   });
     $self->makemaker_args(CCFLAGS => $gpgme_config{ cflags });
 
-    $self->makemaker_args(OPTIMIZE => '-Wall -O0 -g');
+    $self->makemaker_args(OPTIMIZE => '-Wall');
 
     $self->xs_files;
 }
