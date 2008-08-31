@@ -18,9 +18,8 @@ sub gpgme {
     my $config_exe = $self->find_config_exe;
 
     my %gpgme_config = $self->get_config($config_exe);
-    printf "Found GpgME %s (api version %s)\n", @gpgme_config{qw/version api-version/};
+    printf "*** Found GpgME with api version %s\n", $gpgme_config{'api-version'};
 
-    $self->check_version($gpgme_config{ version });
     $self->check_api_version($gpgme_config{ 'api-version' });
 
     $self->makemaker_args(INC     => '-Iperl_glue'          );
@@ -47,7 +46,7 @@ sub get_config {
 
     my %config = map {
         ($_ => $self->run_gpgme_config($exe, $_))
-    } qw/prefix exec-prefix version api-version libs cflags/;
+    } qw/prefix exec-prefix api-version libs cflags/;
 
     return %config;
 }
@@ -59,33 +58,6 @@ sub run_gpgme_config {
     chomp $out;
 
     return $out;
-}
-
-sub check_version {
-    my ($self, $version) = @_;
-
-    if (!defined $version) {
-        warn <<EOM;
-*** Could not find gpgme version.
-    Things might go awry.
-EOM
-        return;
-    }
-
-    my ($major, $minor, $patch) = split /\./, $version, 3;
-    if (!defined $major || !defined $minor) {
-        warn <<EOM;
-*** Could not parse gpgme version number.
-EOM
-        return;
-    }
-
-    if ($major != 1 || $minor != 1) {
-        warn <<EOM;
-*** This version of gpgme hasn't been tested with this module yet.
-    Please tell the author if things work.
-EOM
-    }
 }
 
 sub check_api_version {
