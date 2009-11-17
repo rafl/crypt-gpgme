@@ -42,7 +42,7 @@ sub progress_cb {
 
     isa_ok ($c, 'Crypt::GpgME');
     ok($c == $ctx, 'context references are equal');
-    is ($what, 'stdin', 'what looks sane');
+    ok ($what, 'what looks sane');
     like ($type, qr/^.$/, 'type looks sane'); #FIXME: what chars are valid?
     ok (looks_like_number($current), 'current looks sane');
     ok (looks_like_number($total), 'total looks sane');
@@ -71,7 +71,7 @@ sub progress_cb_ud {
 
     isa_ok ($c, 'Crypt::GpgME');
     ok($c == $ctx, 'context references are equal');
-    is ($what, 'stdin', 'what looks sane');
+    ok ($what, 'what looks sane');
     like ($type, qr/^.$/, 'type looks sane'); #FIXME: what chars are valid?
     ok (looks_like_number($current), 'current looks sane');
     ok (looks_like_number($total), 'total looks sane');
