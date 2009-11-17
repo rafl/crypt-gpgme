@@ -1,5 +1,10 @@
 Revision history for Crypt-GpgME
 
+0.09    Tue, 17 Nov 2009 23:49:04 +0100
+        * Disable auto_install in Makefile.PL.
+        * Upgrade Module::Install to 0.91.
+        * Fix failing tests by not relying on engine specifics.
+
 0.08    Sun, 31 Aug 2008 21:53:02 +0200
         * Require gpgme with api version == 1.
 
