@@ -60,10 +60,6 @@ __END__
 
 Crypt::GpgME - Perl interface to libgpgme
 
-=head1 VERSION
-
-Version 0.04
-
 =head1 SYNOPSIS
 
     use IO::File;
